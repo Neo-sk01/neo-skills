@@ -22,8 +22,9 @@ The context-handoff skill is located at `skills/context-handoff/SKILL.md`. Read 
 - Follow the skill workflow exactly — do not partially apply it
 - Every doc-check via Context7 is mandatory, not optional
 - Handoff documents must be generated at every session end — no exceptions
-- Archive before overwriting — never lose a previous handoff
+- Archive previous handoffs in repo-local memory before overwriting the current one
 - "Seems right" is never sufficient — verification requires evidence
+- Resume from `HANDOFF.md`, run `entire status`, then use the Compact Reload Packet and referenced Entire checkpoints for deeper transcript archaeology
 
 ## Document Stack
 
@@ -32,5 +33,5 @@ The context-handoff skill is located at `skills/context-handoff/SKILL.md`. Read 
 | `CODEBASE.md` | Long-lived | Architecture, conventions, dependency map |
 | `EPIC.md` | Per-epic | Business intent + human tasks |
 | `PLAN.md` | Per-epic | Tasks + APIs + mutations + integration markers |
-| `HANDOFF.md` | Per-session | Pipeline position + budget + all refs |
+| `HANDOFF.md` | Per-session | Compact reload packet + pipeline position + budget + refs |
 | `decisions-log.md` | Cumulative | Decisions + bugs + patterns |

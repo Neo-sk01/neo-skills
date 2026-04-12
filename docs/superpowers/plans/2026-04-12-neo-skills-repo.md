@@ -312,11 +312,11 @@ git mv CODEBASE-TEMPLATE.md skills/context-handoff/CODEBASE-TEMPLATE.md
 
 - [ ] **Step 2: Update the SKILL.md internal references**
 
-The existing SKILL.md references `examples/CODEBASE-TEMPLATE.md`. Update to `CODEBASE-TEMPLATE.md` (now co-located):
+The existing SKILL.md references `CODEBASE-TEMPLATE.md` in the same directory:
 
 Change line 11 from:
 ```
-> Codebase template → `examples/CODEBASE-TEMPLATE.md`
+> Codebase template → `CODEBASE-TEMPLATE.md`
 ```
 To:
 ```
@@ -1810,7 +1810,7 @@ Run the full test suite. No new failures.
 
 1. STOP — no more fix attempts
 2. Find the last green checkpoint: `git log` or `entire explain`
-3. Revert: `git reset --hard <last-green-SHA>`
+3. Restore safely: prefer file-scoped restore of task-owned files, or create a fresh worktree from `<last-green-SHA>` if the current tree has unrelated edits
 4. Log in FAILURES.md:
    - What was tried
    - Why it failed
@@ -2354,7 +2354,7 @@ Requires ChatGPT subscription (incl. Free) or OpenAI API key + Node.js 18.18+.
 
 ```bash
 npm install -g @anthropic/entire-cli
-entire init   # run in your repo
+entire enable --agent claude-code
 ```
 
 ### Superpowers

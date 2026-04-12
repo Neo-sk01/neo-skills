@@ -11,10 +11,14 @@ At session start:
   - Estimate total context window (e.g., 200k tokens)
   - Note tokens consumed by loaded docs
   - Remaining = total - loaded
+  - Reserve 10-20% of the window for debugging/review surprises
+  - Set a target reload budget for the next session
 
 During work:
   - After each task, estimate tokens consumed
   - Calculate: remaining budget vs remaining plan tasks
+  - Re-estimate whether the next session's reload packet still fits comfortably
+  - If handoff/supporting docs are getting bloated, compress or move detail into referenced files
 
 Thresholds:
   - >5k tokens per remaining task: COMFORTABLE — continue
@@ -27,9 +31,31 @@ Record in handoff:
 ```
 ## Context Budget
 - Estimated tokens consumed: {n}
+- Estimated tokens loaded at resume start: {n}
+- Target reload budget for next session: {n}
+- Reserved buffer for unexpected work: {n}
+- Entire input tokens: {n}
+- Entire output tokens: {n}
+- Entire cache creation tokens: {n}
+- Entire cache read tokens: {n}
+- Entire API calls: {n}
 - Tasks completed: {n} in ~{n} tokens each
 - Average tokens per task: {n}
 ```
+
+---
+
+## Handoff Quality Gate
+
+A handoff is only complete if a fresh agent can answer all five questions quickly and knows exactly where to dig deeper in Entire:
+
+1. What exact task or blocker am I resuming?
+2. What should I do first when this session starts?
+3. Which files and which Entire checkpoints/transcript segments must I load, in what order, to regain enough context?
+4. What was verified already, and what must be re-verified?
+5. How much context budget should I expect to spend reloading this work?
+
+If any answer is missing, the handoff is incomplete.
 
 ---
 
@@ -48,11 +74,18 @@ ROLLBACK if ANY:
 ```
 1. STOP — no more fix attempts
 2. Find last green checkpoint (Entire checkpoints table or git log)
-3. Revert: git reset --hard <last-green-SHA> or Entire rewind
-4. Log in FAILURES.md:
+3. Capture current state before changing anything:
+   - save a patch, stash, or branch with the current diff
+   - note dirty files and ownership
+4. Restore safely:
+   - use `entire rewind` only if you intentionally want to move backward within the active session and understand its discard semantics
+   - prefer file-scoped restore of task-owned files
+   - if ownership is unclear or unrelated edits are present, create a fresh worktree from the last green checkpoint instead of reverting the current tree
+   - NEVER use git reset --hard unless the human explicitly asked for it
+5. Log in FAILURES.md:
    - What was tried, why it failed, time spent, checkpoint ID
-5. Re-approach from clean state with different strategy
-6. If same task fails 2x with different approaches:
+6. Re-approach from clean state with different strategy
+7. If same task fails 2x with different approaches:
    → Mark BLOCKED → escalate to user or /codex:rescue
 ```
 
@@ -137,6 +170,43 @@ Tasks requiring:
 
 ---
 
+## Memory Root
+
+Use a repo-local memory directory even when Obsidian is unavailable:
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_NAME=$(basename "$REPO_ROOT")
+MEMORY_ROOT="$REPO_ROOT/.agent-memory"
+```
+
+If `OBSIDIAN_VAULT` is set, mirror repo-local memory into:
+
+```bash
+OBSIDIAN_PROJECT="$OBSIDIAN_VAULT/Projects/$REPO_NAME"
+```
+
+Git + repo-local memory are the required persistence layer. Obsidian is an optional mirror.
+
+---
+
+## Resume Order
+
+Resume in layers:
+
+1. Read `HANDOFF.md`
+2. Run `entire status`
+3. Load the files listed in the Compact Reload Packet
+4. Inspect the referenced Entire checkpoints / `entire explain` outputs:
+   - start with `entire explain --short`
+   - escalate to `--full` or `--raw-transcript` only when the handoff says deeper reasoning is needed
+5. Only then widen the archaeology scope with `--session` or `--search-all` if something is still ambiguous
+6. If state looks stale or broken, run `entire doctor`
+
+The handoff is the index. Entire is the archive. Use both.
+
+---
+
 ## Auto-Documentation
 
 ### What to generate at epic completion
@@ -160,7 +230,8 @@ Tasks requiring:
 
 ## Failed Approaches Log (FAILURES.md)
 
-File: `$OBS_PROJECT/FAILURES.md`
+Primary file: `$MEMORY_ROOT/FAILURES.md`
+Optional mirror: `$OBSIDIAN_PROJECT/FAILURES.md`
 
 ```markdown
 # Failed Approaches: {repo_name}
@@ -182,7 +253,8 @@ Load on every resume alongside CODEBASE.md.
 
 ## Decisions Log
 
-File: `$OBS_PROJECT/decisions-log.md`
+Primary file: `$MEMORY_ROOT/decisions-log.md`
+Optional mirror: `$OBSIDIAN_PROJECT/decisions-log.md`
 
 ```markdown
 # Decisions Log: {repo_name}
@@ -212,12 +284,34 @@ Record in handoff:
 ```
 ## Session Cost
 - Tokens consumed: ~{n}
+- Input tokens: {n}
+- Output tokens: {n}
+- Cache creation tokens: {n}
+- Cache read tokens: {n}
+- API calls: {n}
 - Entire checkpoints: {count}
 - Codex jobs: {count}
 - Tasks completed: {count}
 - Cost per task: ~{n} tokens
 - Efficiency note: {observation for future sessions}
 ```
+
+---
+
+## Compact Reload Packet
+
+This is the handoff section that keeps the next session's context window clean.
+
+Rules:
+- It must be readable in under 60 seconds.
+- It must list required files in load order.
+- It must list the Entire checkpoints, commands, or transcript targets needed for deeper reasoning.
+- It must prefer `entire explain --short` for first-pass archaeology, then explicitly say when to escalate to `--full` or `--raw-transcript`.
+- It must state the exact next action, not just the current topic.
+- It must call out blockers, pending jobs, LOW/NONE doc-checks, and re-verification needs.
+- It must be compact: summarize, then point to files/checkpoints for detail.
+
+If the host supports built-in conversation compaction/summarization, run it only after the handoff has been generated and verified.
 
 ---
 
@@ -232,5 +326,7 @@ Before generating HANDOFF.md:
    - Most information-dense expression?
    - Duplicating what Entire captured?
    - Would next session understand without me?
-5. Write "Context for Next Session" LAST — after compression
+5. Write the compact reload packet before any optional narrative
+6. Point the next session to the exact Entire archaeology targets it should inspect first
+7. Write "Context for Next Session" LAST — after compression, max 120 words
 ```

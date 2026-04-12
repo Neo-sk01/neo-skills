@@ -18,15 +18,17 @@ Copy into your project or Claude Code setup:
 
 ```bash
 # Project-scoped
+mkdir -p .claude/skills
 cp -r neo-skills/skills/context-handoff .claude/skills/context-handoff
 
 # Or global
+mkdir -p ~/.claude/skills
 cp -r neo-skills/skills/context-handoff ~/.claude/skills/context-handoff
 ```
 
 ## Integration Stack Setup
 
-The skill works best with the full integration stack, but each integration is optional.
+The skill works best with the full integration stack, but Obsidian is optional and handled as a mirror. The repo and `.agent-memory/` stay sufficient for handoffs and cumulative logs.
 
 ### Context7 (documentation verification)
 
@@ -64,21 +66,28 @@ Requires ChatGPT subscription (incl. Free) or OpenAI API key + Node.js 18.18+.
 
 ```bash
 npm install -g @anthropic/entire-cli
-entire init   # run in your repo
+entire enable --agent claude-code
+```
+
+Useful follow-up commands:
+
+```bash
+entire status
+entire status --detailed
 ```
 
 ### Superpowers
 
 Superpowers is a Claude Code plugin that provides the development rhythm (brainstorming, planning, execution, review). See the Superpowers documentation for setup.
 
-### Obsidian (optional)
+### Obsidian (optional mirror)
 
 Add to your shell profile:
 ```bash
 export OBSIDIAN_VAULT=~/path/to/your/vault
 ```
 
-If you don't use Obsidian, the workflow still functions — the Git-side persistence (HANDOFF.md in your repo) works independently. You just won't get the archiving, decisions log, or long-term knowledge base features.
+If you don't use Obsidian, the workflow still functions. `HANDOFF.md` stays in the repo, and `.agent-memory/` stores the handoff archive plus repo-local copies of `FAILURES.md` and `decisions-log.md`.
 
 ## First Run
 
@@ -89,11 +98,11 @@ If you don't use Obsidian, the workflow still functions — the Git-side persist
 
 ## Resuming a Session
 
-Drop the latest `HANDOFF.md` into a new session and say:
+Point the new session at the latest `HANDOFF.md` and say:
 
-> "Read HANDOFF.md and continue."
+> "Load `HANDOFF.md`, use its Compact Reload Packet to decide what to read next, inspect the referenced Entire checkpoints, then continue."
 
-The agent will load context, run preflight checks, and pick up where the last session left off.
+The agent should read `HANDOFF.md` first, run `entire status`, then load the required files listed in the reload packet, then use the referenced `entire explain --short` / `--full` / `--raw-transcript` targets as needed. That keeps the next session's context window fresh while still recovering the full reasoning path when the handoff points to it.
 
 ## Next Steps
 

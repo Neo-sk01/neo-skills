@@ -1,6 +1,6 @@
 # neo-skills
 
-The Agentic Context Handoff Workflow — a skill that turns AI coding agents from forgetful assistants into persistent engineering partners.
+The Agentic Context Handoff Workflow — a Claude Code skill that turns AI coding agents from forgetful assistants into persistent engineering partners.
 
 ## The Skill
 
@@ -31,7 +31,7 @@ The skill orchestrates four systems — Superpowers (dev rhythm), Entire (sessio
 |---|---|
 | Start a new project | "Start with Phase 0 — map this codebase" |
 | Begin a new feature | "Frame an epic for {feature description}" |
-| Continue work | Drop `HANDOFF.md` → "Read HANDOFF.md and continue" |
+| Continue work | Open `HANDOFF.md` → "Load the Compact Reload Packet, inspect the referenced Entire checkpoints, then continue" |
 | Force a handoff | "Wrap up and generate a handoff" |
 | Check a library's docs | "Use Context7 to verify {library} {method}" |
 
@@ -41,3 +41,7 @@ The skill orchestrates four systems — Superpowers (dev rhythm), Entire (sessio
 - **Entire** — session recording: checkpoints on every commit, full transcripts, crash recovery
 - **Context7** — documentation verification: resolve library IDs, query current docs, confidence scoring (HIGH/MEDIUM/LOW/NONE)
 - **Codex** — cross-model review: adversarial review on high-risk code, parallel debugging, background delegation
+
+## Resume Rule
+
+Always read `HANDOFF.md` first, run `entire status`, then load the files and Entire archaeology targets listed in its Compact Reload Packet. Use `entire explain --short` for first-pass recall, escalate only as needed, and reserve `entire rewind` for intentional active-session rollback.

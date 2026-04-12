@@ -1,6 +1,6 @@
 # neo-skills
 
-The Agentic Context Handoff Workflow — a skill that turns AI coding agents from forgetful assistants into persistent engineering partners.
+The Agentic Context Handoff Workflow — a Claude Code skill that turns AI coding agents from forgetful assistants into persistent engineering partners.
 
 ## The Problem
 
@@ -9,6 +9,8 @@ Every time you start a new chat session with an AI coding agent, it starts from 
 ## The Solution
 
 This skill gives your agent a structured memory system, a documentation verification habit, and a way of working that treats your project as an ongoing epic rather than a pile of disconnected tasks.
+
+The workflow is optimized for clean restarts: each session leaves behind a compact reload packet, token/context-budget data, and an archived handoff so the next session can pick up with a fresh window while still using Entire for targeted transcript archaeology when full reasoning matters.
 
 It orchestrates four systems:
 - **[Superpowers](https://github.com/obra/superpowers)** — development rhythm (brainstorm → plan → execute → review)
@@ -24,9 +26,9 @@ It orchestrates four systems:
 
 **During each session**, the agent works through the plan, validates code against current documentation, and tracks every decision.
 
-**At the end of each session**, the agent writes `HANDOFF.md` — a structured document capturing exactly where it stopped, what was verified, and what's next.
+**At the end of each session**, the agent writes `HANDOFF.md` — a structured document capturing exactly where it stopped, what was verified, what's next, a compact reload packet, and the specific Entire checkpoints that recover deeper context.
 
-**At the start of the next session**, you say "continue" and the agent picks up exactly where it left off.
+**At the start of the next session**, the agent reads `HANDOFF.md` first, follows its compact reload packet, and then inspects the referenced Entire checkpoints as needed to recover the full reasoning path without blindly replaying everything.
 
 ## Quick Start
 
@@ -40,9 +42,11 @@ Copy into your project or Claude Code setup:
 
 ```bash
 # Project-scoped
+mkdir -p .claude/skills
 cp -r neo-skills/skills/context-handoff .claude/skills/context-handoff
 
 # Or global
+mkdir -p ~/.claude/skills
 cp -r neo-skills/skills/context-handoff ~/.claude/skills/context-handoff
 ```
 
@@ -54,19 +58,31 @@ claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
 
 Optional: get a free API key at context7.com/dashboard for higher rate limits.
 
-### 3. Set your Obsidian vault path (optional)
+### 3. Enable Entire for Claude Code
+
+```bash
+npm install -g @anthropic/entire-cli
+entire enable --agent claude-code
+entire status
+```
+
+### 4. Set your Obsidian vault path (optional mirror)
 
 ```bash
 export OBSIDIAN_VAULT=~/path/to/your/vault
 ```
 
-### 4. Start your first session
+If `OBSIDIAN_VAULT` is unset, the workflow still works. The repo remains the canonical store for `HANDOFF.md`, and repo-local memory in `.agent-memory/` keeps the handoff archive plus cumulative logs.
+
+### 5. Start your first session
 
 > "Read the context-handoff skill. This is a new project — start with Phase 0 (Codebase Understanding)."
 
-### 5. Resume any future session
+### 6. Resume any future session
 
-> "Read HANDOFF.md and continue."
+> "Load `HANDOFF.md`, run `entire status`, follow its Compact Reload Packet, inspect the referenced Entire checkpoints, then continue from the exact next action."
+
+The next session should read `HANDOFF.md` first, run `entire status`, then the files listed in the reload packet, then the referenced Entire checkpoints or `entire explain --short` / `--full` / `--raw-transcript` targets as needed. That keeps the context window fresh while still making full transcript archaeology part of the normal resume flow.
 
 ## The Document Stack
 
@@ -75,8 +91,12 @@ export OBSIDIAN_VAULT=~/path/to/your/vault
 | `CODEBASE.md` | Long-lived | Architecture, conventions, dependency map |
 | `EPIC.md` | Per-epic | Business intent + technical approach |
 | `PLAN.md` | Per-epic | Tasks + verified API contracts |
-| `HANDOFF.md` | Per-session | Session state for continuity |
+| `HANDOFF.md` | Per-session | Compact reload packet + resume index into Entire history |
 | `decisions-log.md` | Cumulative | Institutional memory |
+
+## Scope Note
+
+This repo ships a Claude Code skill and Claude-oriented setup instructions. The underlying ideas are portable, but the install paths, slash commands, and integrations in this repo are written for Claude Code first.
 
 ## Skill Files
 

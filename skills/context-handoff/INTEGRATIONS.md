@@ -108,14 +108,17 @@ Track in decisions-log.md. Same finding in 2+ sessions = systemic → fix root c
 ### Setup
 ```bash
 npm install -g @anthropic/entire-cli
-entire init   # run in repo
+entire enable --agent claude-code
 ```
+
+Use `entire configure` for follow-up changes such as enabling more agents, changing hook options, or adjusting settings.
 
 ### What it captures automatically
 - Full conversation transcript (prompts + responses)
 - All code changes
-- Checkpoints on every git commit
-- Token usage (input/output, cache, API calls)
+- Temporary checkpoints on local shadow branches during active sessions
+- Permanent checkpoint metadata on commit, stored on `entire/checkpoints/v1`
+- Token usage: input, output, cache creation, cache reads, and API call counts
 - Line attribution (`Entire-Attribution: 73% agent (146/200 lines)`)
 - Nested sessions from subagents
 
@@ -136,12 +139,71 @@ Format: `entire/<sessionID>-<worktreeID>`
 - Enable mid-session rewind (even between commits)
 - Crash recovery safety net
 
+### Resume toolkit
+
+Use these commands as the normal archaeology toolbelt:
+
+```bash
+# Check current Entire health and configuration
+entire status
+entire status --detailed
+
+# Resume a branch's captured session state
+entire resume <branch>
+
+# Recover compact reasoning first
+entire explain --commit <sha> --short
+
+# Recover deeper transcript context when needed
+entire explain --checkpoint <id> --full
+entire explain --checkpoint <id> --raw-transcript
+
+# Scope archaeology when multiple sessions/checkpoints are involved
+entire explain --session <session-id> --short
+entire explain --commit <sha> --search-all
+
+# Repair or condense stuck session data
+entire doctor
+```
+
+Preferred archaeology order:
+- `entire status` before trusting local state
+- `entire explain --short` for compact recall
+- `entire explain --full` or `--raw-transcript` only when the handoff says deeper reasoning is required
+- `entire doctor` if the session state or shadow branch looks stale or broken
+- `entire rewind` only for active-session recovery when you intentionally want to move backward inside the current session
+
+### Configuration tips
+
+Useful Entire settings for this workflow:
+- `.entire/settings.json` → `"strategy": "manual-commit"` for clean history and logical checkpoint boundaries
+- `entire enable --agent claude-code --checkpoint-remote <provider:owner/repo>` when checkpoint metadata should live outside the main code repo
+- `entire enable --agent claude-code --skip-push-sessions` if you intentionally do not want session logs pushed on `git push`
+- `.entire/settings.json` → `strategy_options.push_sessions` for automatic checkpoint branch pushes
+- `.entire/settings.json` → `strategy_options.summarize.enabled` for auto-generated summaries at commit time
+- `entire enable --absolute-git-hook-path` if your team uses GUI Git clients
+
+Notes:
+- `manual-commit` is the recommended default for this workflow
+- auto-summaries require Claude CLI to be installed and authenticated
+
+Check effective settings with:
+
+```bash
+entire status --detailed
+```
+
 ### How this skill uses Entire
 - **HANDOFF.md references checkpoint IDs**, not transcript content
-- Every handoff timing ✅ point coincides with a commit = checkpoint
-- Recovery: `entire explain <commit>` reconstructs reasoning
+- Every handoff timing ✅ point should end at a logical commit so Entire has a durable checkpoint
+- Recovery starts with `entire status`, then `entire explain --short`, then `--full`/`--raw-transcript` when needed
+- `entire resume <branch>` is the preferred branch/session recovery path when restarting work on an existing branch
+- `entire doctor` is the repair path for stuck or uncondensed sessions
+- `entire rewind` is the active-session rewind tool, not the primary resume mechanism
 - The Entire Checkpoints table in HANDOFF.md is the breadcrumb trail
+- Entire token usage should be summarized into HANDOFF.md `Context Budget` and `Session Cost`, including input/output/cache/API breakdowns when available
+- Resume should begin with `HANDOFF.md`, then follow its referenced Entire archaeology targets for the full reasoning path
 - Rollback protocol reverts to a known-good checkpoint
 
 ### Key principle
-HANDOFF.md is concise BECAUSE Entire holds the full record. Don't duplicate — reference.
+HANDOFF.md stays compact BECAUSE Entire holds the full record. Don't duplicate — reference. The handoff is the index; Entire is the archive. Use repo-local handoff archives for guaranteed continuity, then mirror to Obsidian if configured.

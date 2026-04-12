@@ -7,7 +7,7 @@
 
 You've just installed a skill that turns your AI coding agent from a forgetful assistant into a persistent engineering partner. 
 
-Here's the problem it solves: every time you start a new chat session with an AI coding agent — Claude Code, Cursor, Copilot, any of them — it starts from zero. It doesn't know what you built yesterday, what decisions you made, why you chose Prisma over Drizzle, or that the auth middleware has a quirk on the `/api/webhooks` route. You end up repeating yourself, re-explaining context, and watching the agent make the same mistakes you already corrected in a previous session.
+Here's the problem it solves: every time you start a new chat session with an AI coding agent, it starts from zero. In Claude Code especially, that means a fresh context window with none of yesterday's reasoning loaded. It doesn't know what you built yesterday, what decisions you made, why you chose Prisma over Drizzle, or that the auth middleware has a quirk on the `/api/webhooks` route. You end up repeating yourself, re-explaining context, and watching the agent make the same mistakes you already corrected in a previous session.
 
 This workflow eliminates that. It gives your agent a structured memory system, a documentation verification habit, and a way of working that treats your project as an ongoing epic rather than a pile of disconnected tasks.
 
@@ -23,9 +23,9 @@ Your agent works in sessions. Each session has a beginning, middle, and end. Thi
 
 **During each session**, the agent works through the plan, validates its code against live library documentation using Context7, runs tests continuously, and tracks every decision it makes.
 
-**At the end of each session**, before context runs out, the agent writes a structured handoff document — `HANDOFF.md` — that captures exactly where it stopped, what it verified, what's next, and what the next session needs to know. This gets saved to both your Git repo and your Obsidian vault.
+**At the end of each session**, before context runs out, the agent writes a structured handoff document — `HANDOFF.md` — that captures exactly where it stopped, what it verified, what's next, and what the next session needs to know. The handoff starts with a compact reload packet so the next session can resume with a clean context window, and it points to the exact Entire checkpoints that recover the deeper reasoning. The latest handoff is saved in your Git repo, the previous one is archived in repo-local memory, and everything can be mirrored to Obsidian if you use it.
 
-**At the start of the next session**, you drop `HANDOFF.md` in and say "continue." The agent reads it, runs a preflight check to make sure the repo matches what the handoff claims, and picks up exactly where it left off.
+**At the start of the next session**, you point the agent at `HANDOFF.md` and tell it to follow the reload packet. The agent reads that first, runs a preflight check to make sure the repo matches what the handoff claims, loads the additional files it actually needs, and then uses the referenced Entire checkpoints to recover the full reasoning path where needed.
 
 No context lost. No re-explaining. No starting over.
 
@@ -67,7 +67,7 @@ Most AI coding workflows operate at the task level: "write this function," "fix 
 
 Your session dies — network drop, browser crash, context limit hit mid-sentence. Everything from that session is gone. You have the Git commits, but you've lost the reasoning, the decisions, the "I was about to try X next" context.
 
-**How this workflow fixes it:** Obsidian archives every handoff with a timestamp before overwriting the current one. Even if a session crashes before generating a proper handoff, the previous session's handoff is still intact in the archive. You never lose more than one session's worth of context, and the Git history (via Entire) provides the commit-level black box recording.
+**How this workflow fixes it:** The repo keeps the current `HANDOFF.md`, `.agent-memory/handoff-archive/` keeps previous handoffs, and Obsidian can mirror both if configured. Even if a session crashes before generating a proper handoff, the previous session's handoff is still intact in the archive. You never lose more than one session's worth of context, and the Git history (via Entire) provides the commit-level black box recording.
 
 ---
 
@@ -107,13 +107,13 @@ Your session dies — network drop, browser crash, context limit hit mid-sentenc
 
 This is the repeating loop that runs for every coding session.
 
-**Resume:** Load `HANDOFF.md`, `CODEBASE.md`, and `PLAN.md`. Run a preflight check — does the repo's HEAD match the handoff's last commit? Are there unexpected dirty files? Do the tests still pass? If anything is off, the agent flags it and asks before proceeding.
+**Resume:** Load `HANDOFF.md` first. Use its compact reload packet to decide which supporting docs to load next and in what order, then inspect the referenced Entire checkpoints or `entire explain` outputs for deeper reasoning. Run a preflight check — does the repo's HEAD match the handoff's last commit? Are there unexpected dirty files? Do the tests still pass? Is the recorded context budget still realistic? If anything is off, the agent flags it and asks before proceeding.
 
 **Work:** Follow the plan phase by phase. Use Superpowers cycles (brainstorm → plan → TDD → review) for each unit of work. Run tests after each meaningful change, not just at the end. Track decisions, discoveries, and blockers as they happen.
 
 **Doc-Check During Work:** Every time the agent is about to use a library API it hasn't verified this session, it queries Context7 first. This isn't optional — it's a mandatory checkpoint. If the API doesn't match expectations, the agent adjusts before writing broken code.
 
-**Handoff:** When a plan phase completes, a blocker is hit, or context pressure builds, the agent finishes its current atomic unit and generates `HANDOFF.md`. This captures the commit SHA, dirty files, completed work, current task, next actions, decisions made, doc verifications performed, codebase discoveries, and environment snapshot. It saves to Git (for agent pickup) and Obsidian (for your knowledge base), archiving the previous handoff first so nothing is ever lost.
+**Handoff:** When a plan phase completes, a blocker is hit, or context pressure builds, the agent finishes its current atomic unit and generates `HANDOFF.md`. This captures a compact reload packet, the Entire archaeology targets for full-context recovery, commit SHA, dirty files, completed work, current task, next actions, decisions made, doc verifications performed, codebase discoveries, environment snapshot, and token/context-budget tracking. It archives the previous handoff in `.agent-memory/`, writes the new handoff to the repo root, and mirrors to Obsidian if configured.
 
 ---
 
@@ -121,17 +121,17 @@ This is the repeating loop that runs for every coding session.
 
 Your project accumulates six documents, each with a specific role:
 
-**`CODEBASE.md`** is the long-term architectural reference. It describes your system's structure, conventions, and dependency status. It lives in both your Obsidian vault and your repo. It's updated whenever the agent discovers something new about your codebase. Lifespan: months. Updated incrementally.
+**`CODEBASE.md`** is the long-term architectural reference. It describes your system's structure, conventions, and dependency status. It lives in your repo and can be mirrored to Obsidian. It's updated whenever the agent discovers something new about your codebase. Lifespan: months. Updated incrementally.
 
 **`EPIC.md`** captures the business intent and technical approach for a feature. It's the "why" and the "how at a high level." One per epic. It ensures that technical decisions stay connected to business goals across sessions.
 
 **`PLAN.md`** is the ordered implementation roadmap with verified API contracts. It's the "what to do, in what order, and what was already confirmed." One per epic. It lives in the repo so the agent can track progress.
 
-**`HANDOFF.md`** is the session state transfer document. It's overwritten every session but archived in Obsidian before each overwrite. It tells the next session exactly where to pick up, what was verified, and what to watch out for.
+**`HANDOFF.md`** is the session state transfer document. It starts with a compact reload packet so a brand-new session can resume quickly, and it points to the specific Entire checkpoints needed for deeper reasoning. The current copy lives at repo root, while previous copies are archived in `.agent-memory/handoff-archive/` and optionally mirrored to Obsidian.
 
-**`decisions-log.md`** is the cumulative architectural knowledge base in Obsidian. Every non-trivial decision from every session gets appended here with rationale and reversibility. Over time, this becomes your project's institutional memory — why things are the way they are.
+**`decisions-log.md`** is the cumulative architectural knowledge base in repo-local memory and can be mirrored to Obsidian. Every non-trivial decision from every session gets appended here with rationale and reversibility. Over time, this becomes your project's institutional memory — why things are the way they are.
 
-**Handoff archive** is the timestamped history of every session's handoff in Obsidian. It's your crash recovery safety net and your audit trail of how the project evolved session by session.
+**Handoff archive** is the timestamped history of every session's handoff in `.agent-memory/handoff-archive/` and optionally Obsidian. It's your crash recovery safety net and your audit trail of how the project evolved session by session.
 
 ---
 
@@ -171,11 +171,11 @@ No more spending the first 15 minutes re-establishing context. No more debugging
 
 ### You can walk away mid-project
 
-Need to switch to a different project for a week? The handoff system doesn't care. Your context is in files, not in your head or in a chat window. Come back, drop `HANDOFF.md`, say "continue," and you're exactly where you left off. The agent even checks that nothing drifted while you were away.
+Need to switch to a different project for a week? The handoff system doesn't care. Your context is in files, not in your head or in a chat window. Come back, point the next session at `HANDOFF.md`, tell it to follow the reload packet, and you're exactly where you left off. The agent even checks that nothing drifted while you were away.
 
 ### You can onboard others
 
-Because the knowledge is in documents — not in chat histories — another developer (or another AI agent) can pick up your project by reading `CODEBASE.md`, `EPIC.md`, `PLAN.md`, and the latest `HANDOFF.md`. The decisions log tells them why things are the way they are. The handoff archive tells them how the project evolved.
+Because the knowledge is in documents — not in chat histories alone — another developer (or another AI agent) can pick up your project by reading `CODEBASE.md`, `EPIC.md`, `PLAN.md`, and the latest `HANDOFF.md`. The decisions log tells them why things are the way they are. The handoff archive tells them how the project evolved. The compact reload packet tells them what to read first, and Entire tells them the full reasoning path behind it.
 
 ---
 
@@ -183,10 +183,10 @@ Because the knowledge is in documents — not in chat histories — another deve
 
 ### 1. Install the skill
 
-Drop `SKILL.md` at one of these locations:
+Install the entire `context-handoff/` folder, not just `SKILL.md`, because the workflow also relies on `REFERENCE.md`, `INTEGRATIONS.md`, and the templates.
 
-- **Project-scoped:** `.claude/skills/context-handoff/SKILL.md` in your repo
-- **Global:** `~/.claude/skills/context-handoff/SKILL.md`
+- **Project-scoped:** `.claude/skills/context-handoff/`
+- **Global:** `~/.claude/skills/context-handoff/`
 
 ### 2. Set up Context7
 
@@ -219,7 +219,23 @@ Add to your shell profile (`.zshrc`, `.bashrc`, etc.):
 export OBSIDIAN_VAULT=~/path/to/your/vault
 ```
 
-If you don't use Obsidian, the workflow still functions — the Git-side persistence (HANDOFF.md in your repo) works independently. You just won't get the archiving, decisions log, or long-term knowledge base features.
+If you don't use Obsidian, the workflow still functions. `HANDOFF.md` remains in the repo root, and `.agent-memory/` stores the handoff archive plus repo-local memory docs like `FAILURES.md` and `decisions-log.md`.
+
+### 3a. Enable Entire for Claude Code
+
+Run in your repository:
+
+```bash
+npm install -g @anthropic/entire-cli
+entire enable --agent claude-code
+```
+
+Helpful follow-up commands:
+
+```bash
+entire status
+entire status --detailed
+```
 
 ### 4. Start your first session
 
@@ -231,30 +247,33 @@ The agent will explore your repo, map the architecture, audit dependencies again
 
 ### 5. Resume any future session
 
-Drop the latest `HANDOFF.md` into a new session and say:
+Point the new session at the latest `HANDOFF.md` and say:
 
-> "Read HANDOFF.md and continue."
+> "Load `HANDOFF.md`, run `entire status`, follow its Compact Reload Packet, inspect the referenced Entire checkpoints, then continue."
 
-The agent will load context, run preflight checks, and pick up where the last session left off.
+The agent will load the handoff first, run `entire status`, use the reload packet to keep the new context window clean, inspect the referenced Entire checkpoints for deeper context, run preflight checks, and pick up where the last session left off.
 
 ---
 
 ## FAQ
 
 **Does this work with any AI coding agent?**
-The skill is written for Claude Code but the principles are agent-agnostic. Any agent that supports MCP (for Context7) and can read markdown files can follow this workflow. The document format is plain markdown — no proprietary tooling required.
+The packaged skill and setup instructions are written for Claude Code. The principles are portable, and other agents can adopt the document format, but the install paths, slash commands, and integration guidance in this repo are Claude-first.
 
 **Do I need Obsidian?**
-No. Obsidian provides the best experience (linked notes, search, graph view over your decisions log), but any folder on disk works. The workflow writes plain markdown files. You could use a Git repo, a Notion sync folder, or just a directory you search with grep.
+No. Obsidian is an optional mirror. The required persistence layer is your repo plus `.agent-memory/`. Obsidian just gives you a nicer place to browse the same information.
 
 **How much overhead does this add?**
 Phase 0 adds 10–15 minutes to your first session on a project. After that, the resume preflight takes under a minute. The doc-checks add a few seconds per API verification. The handoff generation takes 1–2 minutes at the end of a session. Net effect: you save far more time on re-establishing context and debugging hallucinated APIs than you spend on the workflow overhead.
 
 **What if the agent's context fills up before it can generate a handoff?**
-The workflow's handoff triggers are designed to fire before this happens. If it does happen anyway, the previous session's handoff is still in the Obsidian archive (because we archive before overwriting), and the Git history (via Entire) provides the commit-level record. You lose the current session's reasoning but not the previous session's state.
+The workflow's handoff triggers are designed to fire before this happens, and the handoff template explicitly records token/context-budget data so the next session starts fresh instead of bloated. If a session still dies early, the previous session's handoff is still in `.agent-memory/handoff-archive/` (and Obsidian if configured), and Git history plus Entire transcript archaeology provide the full reasoning record.
+
+**What Entire commands matter most for resuming work?**
+Start with `entire status`, then use `entire explain --commit <sha> --short` for compact recall. Escalate to `entire explain --checkpoint <id> --full` or `--raw-transcript` only when the handoff says the deeper reasoning matters. Use `entire resume <branch>` when restoring work on an existing branch and `entire doctor` if the local session state looks stuck.
 
 **Can multiple agents work on the same project?**
-Yes. Each agent reads `HANDOFF.md` from the repo, works, and writes a new one. The Obsidian archive keeps the history. Concurrent work on different features would need separate branches with separate handoff files, just as concurrent human developers would use separate branches.
+Yes. Each agent reads `HANDOFF.md` from the repo, follows the reload packet, uses the referenced Entire checkpoints for deeper context, works, and writes a new one. The repo-local archive keeps the history. Concurrent work on different features would need separate branches with separate handoff files, just as concurrent human developers would use separate branches.
 
 **What if I disagree with a decision the agent logged?**
 Override it. The decisions log is a record, not a contract. Tell the agent in the next session: "Reverse the decision to use X, we're switching to Y because Z." It'll update the log with the reversal and adjust the plan accordingly.
@@ -267,10 +286,10 @@ Override it. The decisions log is a record, not a contract. Tell the agent in th
 |---|---|
 | Start a new project | "Start with Phase 0 — map this codebase" |
 | Begin a new feature | "Frame an epic for {feature description}" |
-| Continue work | Drop `HANDOFF.md` → "Read HANDOFF.md and continue" |
+| Continue work | Open `HANDOFF.md` → "Load the Compact Reload Packet, run `entire status`, inspect the referenced Entire checkpoints, then continue" |
 | Force a handoff | "Wrap up and generate a handoff" |
 | Check a library's docs | "Use Context7 to verify {library} {method}" |
-| Review the decisions log | Open `$OBSIDIAN_VAULT/Projects/{repo}/decisions-log.md` |
-| See session history | Browse `$OBSIDIAN_VAULT/Projects/{repo}/handoff-archive/` |
+| Review the decisions log | Open `.agent-memory/decisions-log.md` (or Obsidian mirror) |
+| See session history | Browse `.agent-memory/handoff-archive/` (or Obsidian mirror) |
 | Update codebase knowledge | "Update CODEBASE.md with what we learned this session" |
 | Onboard a teammate | Share `CODEBASE.md`, latest `EPIC.md`, and `HANDOFF.md` |

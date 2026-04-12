@@ -13,6 +13,26 @@ Epic: {name from EPIC.md}
 Plan progress: {completed task #} of {total tasks}
 Plan mutations this session: {count, or "none"}
 
+## Compact Reload Packet
+- Exact next action: {single concrete action the next session should do first}
+- Resume commands:
+  - `entire status`
+  - `entire explain --commit {sha} --short`
+- Required reload order:
+  1. `HANDOFF.md` — current state and verification evidence
+  2. `{path}` — {why this file is required next}
+  3. `{path}` — {why this file is required next}
+- Entire archaeology targets:
+  1. `entire explain --commit {sha} --short` — {what compact reasoning this recovers}
+  2. `entire explain --checkpoint {id} --full` — {what deeper reasoning this recovers}
+  3. `entire explain --checkpoint {id} --raw-transcript` — {use only if exact raw transcript details are needed}
+- Archaeology escalation rule: {when the next session should inspect Entire before acting, and when it can proceed directly from the handoff}
+- Optional reloads:
+  - `{path}` — {only if investigating X}
+  - `{path}` — {only if re-checking Y}
+- Avoid reloading: {transcript/history or low-value files that are no longer needed}
+- Resume budget target: ~{n} tokens for handoff/docs + ~{n} tokens for targeted Entire archaeology if needed
+
 ## Pipeline Position
 - Superpowers stage: {brainstorming | planning | executing | reviewing | finishing}
 - Active skill: {e.g., test-driven-development}
@@ -25,11 +45,24 @@ Plan mutations this session: {count, or "none"}
 
 ## Context Budget
 - Estimated tokens consumed this session: {n}
+- Estimated tokens loaded at resume start: {n}
+- Target reload budget for next session: {n}
+- Reserved buffer for unexpected work: {n}
+- Entire input tokens: {n}
+- Entire output tokens: {n}
+- Entire cache creation tokens: {n}
+- Entire cache read tokens: {n}
+- Entire API calls: {n}
 - Tasks completed: {n} in ~{n} tokens each
 - Average tokens per task: {n}
 
 ## Session Cost
 - Tokens consumed: ~{n}
+- Input tokens: {n}
+- Output tokens: {n}
+- Cache creation tokens: {n}
+- Cache read tokens: {n}
+- API calls: {n}
 - Entire checkpoints: {count}
 - Codex jobs: {count}
 - Tasks completed: {count}
@@ -42,6 +75,12 @@ Plan mutations this session: {count, or "none"}
 | {12-char hex} | {short SHA} {message} | {1-line summary} |
 
 Latest checkpoint: `{ID}`
+
+## Entire Status
+- Last `entire status` result: {healthy | warning | blocked}
+- `entire status --detailed` reviewed this session: yes/no
+- `entire doctor` needed: yes/no
+- Shadow branch note: {current shadow branch state if relevant, or "none noted"}
 
 ## Codex Jobs (this session)
 | Job ID | Type | Status | Key Findings |
@@ -97,6 +136,12 @@ Entire-Attribution: {agent %}
 3. {If LOW doc-check: "Re-verify {library} {method}"}
 4. {Plan task # — concrete step}
 
+## Compression Pass
+- Compact reload packet verified: yes/no
+- Entire archaeology targets verified: yes/no
+- Host compact/summarize feature run after handoff write: yes/no/n-a
+- Detailed reasoning intentionally left in: {Entire checkpoint IDs / referenced docs}
+
 ## Decisions Made
 | Decision | Rationale | Reversible? |
 |---|---|---|
@@ -140,10 +185,10 @@ Entire-Attribution: {agent %}
 - Build: passing | failing ({reason})
 
 ## Context for Next Session
-{2-3 sentences. Written AFTER compression pass.
+{2-3 sentences, max 120 words. Written AFTER compression pass.
 What would you tell a teammate? Note pending Codex jobs,
 human tasks, LOW doc-checks, hunches.
-For full reasoning, point to Entire checkpoint.}
+For full reasoning, point to specific Entire checkpoints or `entire explain` targets.}
 ```
 
 ---
@@ -156,20 +201,30 @@ For full reasoning, point to Entire checkpoint.}
 REPO_ROOT=$(git rev-parse --show-toplevel)
 REPO_NAME=$(basename "$REPO_ROOT")
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-OBS_PROJECT="$OBSIDIAN_VAULT/Projects/$REPO_NAME"
+MEMORY_ROOT="$REPO_ROOT/.agent-memory"
 
-# 1. Git repo
+# 1. Archive previous repo handoff FIRST
+mkdir -p "$MEMORY_ROOT/handoff-archive"
+if [ -f "$REPO_ROOT/HANDOFF.md" ]; then
+  cp "$REPO_ROOT/HANDOFF.md" "$MEMORY_ROOT/handoff-archive/$TIMESTAMP.md"
+fi
+
+# 2. Write current handoff to repo root
 cp HANDOFF.md "$REPO_ROOT/HANDOFF.md"
 
-# 2. Obsidian archive FIRST
-mkdir -p "$OBS_PROJECT/handoff-archive"
-cp HANDOFF.md "$OBS_PROJECT/handoff-archive/$TIMESTAMP.md"
-
-# 3. Obsidian current (overwrite)
-cp HANDOFF.md "$OBS_PROJECT/HANDOFF.md"
+# 3. Optional Obsidian mirror
+if [ -n "$OBSIDIAN_VAULT" ]; then
+  OBSIDIAN_PROJECT="$OBSIDIAN_VAULT/Projects/$REPO_NAME"
+  mkdir -p "$OBSIDIAN_PROJECT/handoff-archive"
+  if [ -f "$MEMORY_ROOT/handoff-archive/$TIMESTAMP.md" ]; then
+    cp "$MEMORY_ROOT/handoff-archive/$TIMESTAMP.md" "$OBSIDIAN_PROJECT/handoff-archive/$TIMESTAMP.md"
+  fi
+  cp "$REPO_ROOT/HANDOFF.md" "$OBSIDIAN_PROJECT/HANDOFF.md"
+fi
 
 # 4. Update CODEBASE.md if "Codebase Updates" non-empty
-# 5. Update FAILURES.md if "Failed Approaches" non-empty
-# 6. Append to decisions-log.md (dedup)
-# 7. Update PLAN.md progress markers + mutations
+# 5. Update "$MEMORY_ROOT/FAILURES.md" if "Failed Approaches" non-empty
+# 6. Append to "$MEMORY_ROOT/decisions-log.md" (dedup)
+# 7. Mirror FAILURES.md / decisions-log.md to Obsidian if configured
+# 8. Update PLAN.md progress markers + mutations
 ```
