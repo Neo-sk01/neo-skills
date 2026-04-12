@@ -1,23 +1,39 @@
 # neo-skills
 
-Production-grade engineering skills for AI coding agents, integrated with Superpowers, Entire, Context7, and Codex.
+The Agentic Context Handoff Workflow — a skill that turns AI coding agents from forgetful assistants into persistent engineering partners.
 
-## Skill Rules
+## The Skill
 
-- Every skill lives in `skills/<name>/SKILL.md`
-- Check for an applicable skill before starting any work — even a 1% chance means check
-- Skills are workflows, not suggestions — follow steps in order, don't skip verification
-- Multiple skills can chain: idea-refine → spec → plan → build → test → review → ship
-- "Seems right" is never sufficient — verification requires evidence (test output, build results, runtime data)
+The context-handoff skill lives at `skills/context-handoff/SKILL.md` with supporting files:
 
-## Core Operating Behaviors
+- `SKILL.md` — the workflow definition
+- `REFERENCE.md` — detailed protocols (rollback, plan mutation, integration checkpoints)
+- `INTEGRATIONS.md` — Context7, Codex, and Entire setup and usage
+- `HANDOFF-TEMPLATE.md` — session handoff document template
+- `CODEBASE-TEMPLATE.md` — codebase mapping template
 
-1. **Surface assumptions** — before implementing anything non-trivial, state your assumptions explicitly and ask for correction
-2. **Manage confusion actively** — when you hit inconsistencies or unclear specs, STOP. Name the confusion. Ask. Don't guess.
-3. **Push back when warranted** — sycophancy is a failure mode. Point out problems, quantify downsides, propose alternatives. Accept override with full information.
-4. **Enforce simplicity** — prefer the boring, obvious solution. If 100 lines suffice, 1000 lines is a failure. Ask: "Would a staff engineer say 'why didn't you just...?'"
-5. **Maintain scope discipline** — touch only what you're asked to touch. Don't clean up adjacent code, remove comments you don't understand, or add unrequested features.
-6. **Verify, don't assume** — every skill has a verification step. A task is not complete until verification passes.
+## How It Works
+
+The skill orchestrates four systems — Superpowers (dev rhythm), Entire (session recording), Context7 (doc verification), Codex (cross-model review) — managing memory across sessions so nothing is lost.
+
+**Design principle: context is the bottleneck, not speed.**
+
+## The Four Phases
+
+1. **Phase 0 — Codebase Understanding:** Map architecture, conventions, dependencies. Build `CODEBASE.md`.
+2. **Phase 1 — Epic Framing:** Define what to build, cross-reference against CODEBASE.md, produce `EPIC.md`.
+3. **Phase 2 — Plan Design:** Break epic into tasks with verified API contracts. Produce `PLAN.md`.
+4. **Phase 3 — Session Lifecycle:** Resume from handoff, work the plan, generate `HANDOFF.md` at session end.
+
+## Quick Reference
+
+| I want to... | Do this |
+|---|---|
+| Start a new project | "Start with Phase 0 — map this codebase" |
+| Begin a new feature | "Frame an epic for {feature description}" |
+| Continue work | Drop `HANDOFF.md` → "Read HANDOFF.md and continue" |
+| Force a handoff | "Wrap up and generate a handoff" |
+| Check a library's docs | "Use Context7 to verify {library} {method}" |
 
 ## Integration Stack
 
@@ -25,29 +41,3 @@ Production-grade engineering skills for AI coding agents, integrated with Superp
 - **Entire** — session recording: checkpoints on every commit, full transcripts, crash recovery
 - **Context7** — documentation verification: resolve library IDs, query current docs, confidence scoring (HIGH/MEDIUM/LOW/NONE)
 - **Codex** — cross-model review: adversarial review on high-risk code, parallel debugging, background delegation
-
-## Skill Discovery
-
-```
-Task arrives
-    ├── Vague idea? ───────────────→ idea-refine
-    ├── New feature/change? ───────→ spec-driven-development
-    ├── Have spec, need tasks? ────→ planning-and-task-breakdown
-    ├── Implementing? ─────────────→ incremental-implementation
-    │   ├── UI work? ──────────────→ frontend-ui-engineering
-    │   └── Need context? ─────────→ context-engineering
-    ├── Writing tests? ────────────→ test-driven-development
-    ├── Something broke? ──────────→ debugging-and-error-recovery
-    ├── Reviewing code? ───────────→ code-review
-    │   └── Too complex? ──────────→ code-simplification
-    ├── Ready to deploy? ──────────→ shipping-and-launch
-    └── Session ending? ───────────→ context-handoff
-```
-
-## Conventions
-
-- Skill directories: `kebab-case`
-- Skill files: `SKILL.md` (always uppercase)
-- Supporting files: `UPPERCASE.md` (e.g., `REFERENCE.md`, `INTEGRATIONS.md`)
-- YAML frontmatter required on every `SKILL.md`
-- Skills stay under 500 lines — heavy reference goes in supporting files

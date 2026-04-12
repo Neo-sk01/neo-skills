@@ -1,4 +1,4 @@
-# Getting Started with neo-skills
+# Getting Started
 
 ## Prerequisites
 
@@ -6,31 +6,27 @@
 
 ## Installation
 
-### Claude Code (recommended)
-
-Clone the repository and add it to your Claude Code configuration:
+### Clone the repo
 
 ```bash
 git clone https://github.com/neosekaleli/neo-skills.git
 ```
 
-Then reference it in your project's CLAUDE.md or add the skills to your Claude Code setup.
+### Install the skill
 
-### Manual installation
-
-Copy the skills you want into your project:
+Copy into your project or Claude Code setup:
 
 ```bash
-# Copy a single skill
-cp -r neo-skills/skills/context-handoff ~/.claude/skills/
+# Project-scoped
+cp -r neo-skills/skills/context-handoff .claude/skills/context-handoff
 
-# Or copy all skills
-cp -r neo-skills/skills/* ~/.claude/skills/
+# Or global
+cp -r neo-skills/skills/context-handoff ~/.claude/skills/context-handoff
 ```
 
 ## Integration Stack Setup
 
-neo-skills works best with the full integration stack, but each integration is optional.
+The skill works best with the full integration stack, but each integration is optional.
 
 ### Context7 (documentation verification)
 
@@ -75,23 +71,30 @@ entire init   # run in your repo
 
 Superpowers is a Claude Code plugin that provides the development rhythm (brainstorming, planning, execution, review). See the Superpowers documentation for setup.
 
-## Slash Commands
+### Obsidian (optional)
 
-Once installed, use these commands in Claude Code:
+Add to your shell profile:
+```bash
+export OBSIDIAN_VAULT=~/path/to/your/vault
+```
 
-| Command | What it does |
-|---------|-------------|
-| `/spec` | Refine an idea and produce a specification |
-| `/plan` | Break a spec into implementation tasks |
-| `/build` | Implement tasks incrementally |
-| `/test` | Write tests using TDD (RED-GREEN-REFACTOR) |
-| `/review` | Five-axis code review with optional Codex |
-| `/debug` | Systematic debugging with rollback protocol |
-| `/ship` | Pre-launch checks, deploy, and archive session |
+If you don't use Obsidian, the workflow still functions — the Git-side persistence (HANDOFF.md in your repo) works independently. You just won't get the archiving, decisions log, or long-term knowledge base features.
 
 ## First Run
 
 1. Start Claude Code in your project directory
-2. Run `/spec` with your feature idea
-3. Follow the skill workflow — it will guide you through each step
-4. The skills chain naturally: spec -> plan -> build -> test -> review -> ship
+2. Tell your agent:
+   > "Read the context-handoff skill. This is a new project — start with Phase 0 (Codebase Understanding)."
+3. The agent will explore your repo, map the architecture, audit dependencies against live docs, and produce `CODEBASE.md`
+
+## Resuming a Session
+
+Drop the latest `HANDOFF.md` into a new session and say:
+
+> "Read HANDOFF.md and continue."
+
+The agent will load context, run preflight checks, and pick up where the last session left off.
+
+## Next Steps
+
+Read the [onboarding guide](onboarding-guide.md) for a detailed walkthrough of the full workflow.
