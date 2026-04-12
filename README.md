@@ -11,9 +11,9 @@ Every time you start a new chat session with an AI coding agent, it starts from 
 This skill gives your agent a structured memory system, a documentation verification habit, and a way of working that treats your project as an ongoing epic rather than a pile of disconnected tasks.
 
 It orchestrates four systems:
-- **[Superpowers](https://github.com/anthropics/superpowers)** — development rhythm (brainstorm → plan → execute → review)
-- **[Entire](https://github.com/anthropics/entire)** — session recording, checkpoints, crash recovery
-- **[Context7](https://context7.com)** — documentation verification with confidence scoring
+- **[Superpowers](https://github.com/obra/superpowers)** — development rhythm (brainstorm → plan → execute → review)
+- **[Entire](https://entire.io/)** — session recording, checkpoints, crash recovery
+- **[Context7](https://github.com/upstash/context7)** — documentation verification with confidence scoring
 - **[Codex](https://github.com/openai/codex)** — cross-model review, parallel debugging
 
 ## How It Works
