@@ -1,0 +1,44 @@
+{
+  "eval_id": 2,
+  "eval_name": "budget-pressure-handoff",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "recognizes-budget-pressure",
+      "passed": true,
+      "evidence": "Response acknowledges the user's request to wrap up and doesn't start new tasks. However, it doesn't reference specific budget thresholds or protocols — it just follows the user's instruction."
+    },
+    {
+      "text": "follows-handoff-template",
+      "passed": false,
+      "evidence": "Generated HANDOFF.md has only 5 sections (Summary, What Was Done, What's Next, Key Context, Files Changed, Environment, Test Status). Missing: Compact Reload Packet, Pipeline Position, Context Budget, Session Cost, Entire Checkpoints, Codex Jobs, Dirty Files, Failed Approaches, Plan Mutations, Human Tasks Queue, Compression Pass, Decisions Made, Doc Verifications, Integration Checkpoint Results, Test Manifest, Codebase Updates, Env Snapshot."
+    },
+    {
+      "text": "includes-compact-reload-packet",
+      "passed": false,
+      "evidence": "No compact reload packet. The baseline's 'What's Next' section lists remaining tasks but doesn't specify exact next action, reload order, Entire archaeology targets, or resume budget."
+    },
+    {
+      "text": "includes-context-budget",
+      "passed": false,
+      "evidence": "No context budget data anywhere in the handoff. No token estimates, no reload budget, no buffer allocation."
+    },
+    {
+      "text": "includes-entire-checkpoints",
+      "passed": false,
+      "evidence": "No Entire checkpoint references. No checkpoint IDs, no Entire commands, no archaeology targets."
+    },
+    {
+      "text": "compression-pass",
+      "passed": false,
+      "evidence": "No compression pass performed or mentioned. The handoff is brief but not because of deliberate compression — it's just sparse."
+    },
+    {
+      "text": "no-new-tasks-started",
+      "passed": true,
+      "evidence": "Response wraps up without starting task #7. Lists remaining tasks as 'What's Next' for the next session."
+    }
+  ],
+  "pass_rate": 0.286,
+  "summary": "2 of 7 assertions passed. Baseline wraps up correctly and doesn't start new work, but the generated handoff is minimal — missing most structural sections, no Entire integration, no context budget, no compact reload packet."
+}

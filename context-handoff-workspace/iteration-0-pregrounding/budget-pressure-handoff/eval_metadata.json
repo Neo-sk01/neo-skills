@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "budget-pressure-handoff",
+  "prompt": "I'm running low on context budget — I think we're in CAUTION territory. I just finished implementing the webhook handler (task #6) and the tests pass. Wrap up and generate a handoff so the next session can pick up cleanly.",
+  "assertions": []
+}

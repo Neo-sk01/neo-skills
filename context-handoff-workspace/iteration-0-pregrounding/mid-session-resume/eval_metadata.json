@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "mid-session-resume",
+  "prompt": "Here's my HANDOFF.md from the last session. Load it, check Entire status, and continue where I left off on the API endpoints.",
+  "assertions": []
+}

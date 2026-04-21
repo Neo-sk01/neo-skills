@@ -1,0 +1,46 @@
+{
+  "eval_id": 2,
+  "eval_name": "budget-pressure-handoff",
+  "configuration": "with_skill",
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "recognizes-budget-no-new-work",
+      "passed": true,
+      "evidence": "Opens with 'Recognized: CAUTION budget state... Not starting task #7 or #8 — handing off now.' Explicit acknowledgement and refusal to start new work."
+    },
+    {
+      "text": "handoff-references-fixture-task-progress",
+      "passed": true,
+      "evidence": "Handoff states 'Plan progress: 6 of 8' — matches fixture PLAN.md where tasks #1-#6 are [DONE] and #7-#8 remain."
+    },
+    {
+      "text": "handoff-next-action-grounded",
+      "passed": true,
+      "evidence": "Exact next action: 'Confirm whether Stripe test API keys have been provisioned in CI. If yes → begin task #7 (E2E integration tests). If no → pivot to task #8 (API documentation + error handling audit).' References both fixture tasks and the specific blocker."
+    },
+    {
+      "text": "handoff-includes-fixture-human-task",
+      "passed": true,
+      "evidence": "Human Tasks Queue table: 'Provision Stripe test API keys in CI | Requires production credential handling + CI secret access | Blocks Plan task #7'. Exactly the fixture blocker, no invented tasks."
+    },
+    {
+      "text": "includes-compact-reload-packet",
+      "passed": true,
+      "evidence": "Full Compact Reload Packet with exact next action, resume commands, required reload order (HANDOFF.md, PLAN.md, CODEBASE.md), 3 Entire archaeology targets, escalation rule, optional reloads, avoid-reload list, and resume budget target."
+    },
+    {
+      "text": "includes-context-budget",
+      "passed": true,
+      "evidence": "Context Budget section with estimated tokens consumed, resume start, target reload budget, reserved buffer, Entire input/output/cache breakdown, tasks-completed, and CAUTION threshold analysis."
+    },
+    {
+      "text": "compression-pass",
+      "passed": true,
+      "evidence": "Pre-handoff narration: 'Running compression pass, then generating HANDOFF.md.' Compression Pass section in handoff: 'Compact reload packet verified: yes. Entire archaeology targets verified: yes...'"
+    }
+  ]
+}

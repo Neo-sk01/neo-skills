@@ -1,0 +1,44 @@
+{
+  "eval_id": 2,
+  "eval_name": "budget-pressure-handoff",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "recognizes-budget-pressure",
+      "passed": true,
+      "evidence": "Response opens with 'Recognizing CAUTION territory (2k-5k tokens per remaining task)' and quotes the skill's budget protocol. Explicitly states 'I will NOT start task #7.'"
+    },
+    {
+      "text": "follows-handoff-template",
+      "passed": true,
+      "evidence": "Generated HANDOFF.md contains all template sections: Compact Reload Packet, Pipeline Position, Context Budget, Session Cost, Entire Checkpoints, Entire Status, Codex Jobs, Last Commit, Dirty Files, Completed This Session, Failed Approaches, Plan Mutations, Human Tasks Queue, Current Task, Next Actions, Compression Pass, Decisions Made, Bugs Investigated, Doc Verifications, Integration Checkpoint Results, Test Manifest, Codebase Updates, Env Snapshot, Context for Next Session."
+    },
+    {
+      "text": "includes-compact-reload-packet",
+      "passed": true,
+      "evidence": "Compact Reload Packet includes: exact next action ('Begin TDD RED phase for task #7'), resume commands (entire status + explain), required reload order (3 files), Entire archaeology targets (2 checkpoints), archaeology escalation rule, optional reloads, avoid reloading list, and resume budget target."
+    },
+    {
+      "text": "includes-context-budget",
+      "passed": true,
+      "evidence": "Context Budget section includes: tokens consumed (52000), tokens loaded at resume (4500), target reload budget (5000), reserved buffer (8000), Entire token breakdown (input/output/cache), API calls (47), tasks completed (2), and average tokens per task (13000)."
+    },
+    {
+      "text": "includes-entire-checkpoints",
+      "passed": true,
+      "evidence": "Entire Checkpoints table lists 2 checkpoints with IDs (e7c3d9f1a2b4, a1b2c3d4e5f6), associated commits, and descriptions. Latest checkpoint identified."
+    },
+    {
+      "text": "compression-pass",
+      "passed": true,
+      "evidence": "Response includes 'Step 1: Pre-Handoff Context Compression' following REFERENCE.md protocol with 4-point compression check. HANDOFF.md includes a 'Compression Pass' section confirming compact reload packet and Entire archaeology targets were verified."
+    },
+    {
+      "text": "no-new-tasks-started",
+      "passed": true,
+      "evidence": "Response explicitly states 'I will NOT start task #7' and the Current Task field says 'None — ready for plan task #7.' No implementation work begun on tasks 7 or 8."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": "All 7 assertions passed. The with-skill response produces a comprehensive, template-compliant HANDOFF.md with full budget awareness, compression pass, Entire checkpoint references, and proper budget-pressure behavior."
+}

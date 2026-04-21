@@ -1,0 +1,131 @@
+{
+  "skill_name": "context-handoff",
+  "evals": [
+    {
+      "id": 0,
+      "name": "new-project-kickoff",
+      "prompt": "I just cloned the acme-billing repo. It's a Next.js + Prisma + Stripe project and I need to add subscription management. This is my first session — help me get started. Here's the package.json for reference.",
+      "expected_output": "Should produce a CODEBASE.md mapping the architecture using the actual dependencies from package.json (Next.js 15.1.0, Prisma 5.22.0, Stripe 17.2.0, ioredis 5.4.1, next-auth 5.0.0-beta.25). Should run Context7 checks naming specific libraries from the fixture. Should follow Phase 0 then Phase 1. Should identify human tasks like Stripe API key configuration.",
+      "files": [
+        {
+          "path": "package.json",
+          "content_ref": "evals/fixtures/package-json-acme.json"
+        }
+      ],
+      "assertions": [
+        {
+          "name": "mentions-phase-0",
+          "description": "Response explicitly follows Phase 0 (codebase mapping) before any implementation"
+        },
+        {
+          "name": "produces-codebase-md-grounded",
+          "description": "Response produces CODEBASE.md content that references actual dependencies from the fixture: must mention at least 3 of next@15.1.0, @prisma/client@5.22.0, stripe@17.2.0, ioredis@5.4.1, next-auth@5.0.0-beta.25 with their correct versions"
+        },
+        {
+          "name": "dependency-map-from-fixture",
+          "description": "Cross-system dependency map includes systems derivable from the fixture (PostgreSQL via Prisma, Stripe via stripe package, Redis via ioredis) — not invented systems absent from package.json"
+        },
+        {
+          "name": "context7-names-fixture-libraries",
+          "description": "Context7 verification mentions specific libraries from the fixture by name (e.g., next.js, prisma, stripe-node) rather than generic 'verifying libraries'"
+        },
+        {
+          "name": "identifies-human-tasks-grounded",
+          "description": "Identifies human tasks that are derivable from the project (Stripe API keys, database credentials, auth provider config) — not generic placeholders"
+        },
+        {
+          "name": "no-invented-dependencies",
+          "description": "Response does NOT reference major dependencies or systems that are absent from the fixture package.json (e.g., MongoDB, GraphQL, AWS SDK, Firebase)"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "mid-session-resume",
+      "prompt": "Here's my HANDOFF.md from session 4 and the current PLAN.md. Load them, check Entire status, and continue where I left off on the API endpoints.",
+      "expected_output": "Should follow resume protocol grounded in the fixture HANDOFF.md: read handoff first, run entire status, load files in the exact reload order specified (HANDOFF.md → PLAN.md → src/services/subscription.ts). Should reference the specific Entire archaeology targets from the fixture (ck_7f8e9a2b, ck_3d4e5f6a). Should continue with task #5 (upgrade endpoint) as specified in the handoff's 'Exact next action'. Should reference the existing Context7 verifications (stripe-node subscription.create, webhook constructEvent, next.js route handler) rather than inventing new ones.",
+      "files": [
+        {
+          "path": "HANDOFF.md",
+          "content_ref": "evals/fixtures/handoff-session-4.md"
+        },
+        {
+          "path": "PLAN.md",
+          "content_ref": "evals/fixtures/plan-subscription-mgmt.md"
+        }
+      ],
+      "assertions": [
+        {
+          "name": "follows-fixture-reload-order",
+          "description": "Response loads files in the exact order from the fixture's Compact Reload Packet: HANDOFF.md first, then PLAN.md, then src/services/subscription.ts — not a different or invented order"
+        },
+        {
+          "name": "runs-entire-status",
+          "description": "Response runs or explicitly calls `entire status` before proceeding with implementation work"
+        },
+        {
+          "name": "references-fixture-checkpoints",
+          "description": "Response references the specific Entire checkpoint IDs from the fixture: ck_7f8e9a2b (Stripe API version analysis) and/or ck_5e6f7a8b (latest checkpoint) — not invented checkpoint IDs"
+        },
+        {
+          "name": "follows-fixture-escalation-rule",
+          "description": "Response follows the fixture's archaeology escalation rule: proceeds directly from handoff for task #5, inspects Entire only if Stripe API behaves unexpectedly"
+        },
+        {
+          "name": "continues-task-5-from-fixture",
+          "description": "Response continues with task #5 (upgrade endpoint, POST /api/subscriptions/:id/upgrade) as specified in the fixture's 'Exact next action' — not task #4 or #6"
+        },
+        {
+          "name": "references-fixture-context7-results",
+          "description": "Response acknowledges or builds on existing Context7 verifications from the fixture (stripe-node subscription.create HIGH confidence, webhook constructEvent HIGH confidence) rather than re-running identical checks from scratch"
+        },
+        {
+          "name": "acknowledges-fixture-human-task",
+          "description": "Response notes the pending human task from the fixture: Stripe test API keys needed in CI, blocking task #7"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "budget-pressure-handoff",
+      "prompt": "I'm running low on context budget — I think we're in CAUTION territory. I just finished implementing the downgrade endpoint (task #6) and the tests pass. Here's the current PLAN.md. Wrap up and generate a handoff so the next session can pick up cleanly.",
+      "expected_output": "Should recognize budget pressure and avoid starting task #7. Should generate HANDOFF.md following the template with content grounded in the fixture PLAN.md: next action is task #7 (E2E tests, but blocked on Stripe CI keys) or task #8 (API docs). Must include the human task blocker from PLAN.md (Stripe test API keys in CI). The compact reload packet must reference real task numbers and blocking status from the fixture, not invented state.",
+      "files": [
+        {
+          "path": "PLAN.md",
+          "content_ref": "evals/fixtures/plan-with-task6-done.md"
+        }
+      ],
+      "assertions": [
+        {
+          "name": "recognizes-budget-no-new-work",
+          "description": "Response acknowledges CAUTION budget state and explicitly refrains from starting task #7 or #8"
+        },
+        {
+          "name": "handoff-references-fixture-task-progress",
+          "description": "Generated handoff correctly states plan progress as 6 of 8 tasks completed, matching the fixture PLAN.md — not a different count"
+        },
+        {
+          "name": "handoff-next-action-grounded",
+          "description": "Handoff's 'Exact next action' references task #7 (E2E tests) or task #8 (API docs) from the fixture, noting that #7 is blocked on Stripe CI keys"
+        },
+        {
+          "name": "handoff-includes-fixture-human-task",
+          "description": "Handoff's Human Tasks Queue includes the Stripe test API keys blocker from the fixture PLAN.md, not invented human tasks"
+        },
+        {
+          "name": "includes-compact-reload-packet",
+          "description": "Handoff includes a Compact Reload Packet section with reload order, Entire archaeology targets, and escalation rule"
+        },
+        {
+          "name": "includes-context-budget",
+          "description": "Handoff includes Context Budget section with token estimates"
+        },
+        {
+          "name": "compression-pass",
+          "description": "Response mentions or performs a compression pass before or during handoff generation"
+        }
+      ]
+    }
+  ]
+}

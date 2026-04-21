@@ -1,0 +1,41 @@
+{
+  "eval_id": 0,
+  "eval_name": "new-project-kickoff",
+  "configuration": "without_skill",
+  "total": 6,
+  "passed": 2,
+  "failed": 4,
+  "pass_rate": 0.333,
+  "expectations": [
+    {
+      "text": "mentions-phase-0",
+      "passed": false,
+      "evidence": "No mention of Phase 0 or any structured phased approach. Response jumps straight to stack observations, proposes Prisma schema, Stripe client, and route handlers as implementation plan."
+    },
+    {
+      "text": "produces-codebase-md-grounded",
+      "passed": false,
+      "evidence": "No CODEBASE.md artifact produced. Response is conversational: 'Stack observations' + 'If you want to start moving now, here's the typical shape' — reads as a how-to guide, not a codebase map."
+    },
+    {
+      "text": "dependency-map-from-fixture",
+      "passed": false,
+      "evidence": "No cross-system dependency map table. Dependencies mentioned in prose ('Next.js 15.1', 'Prisma 5.22', etc.) but no structured map of systems, interfaces, contracts, and health checks."
+    },
+    {
+      "text": "context7-names-fixture-libraries",
+      "passed": false,
+      "evidence": "Context7 not mentioned or used. No documentation verification workflow — response cites API details from training data without confidence scoring."
+    },
+    {
+      "text": "identifies-human-tasks-grounded",
+      "passed": true,
+      "evidence": "Asks 5 clarifying questions that implicitly identify human tasks: subscription model, billing cadence, ownership, Prisma schema state, Stripe setup. Also mentions STRIPE_SECRET_KEY in env example."
+    },
+    {
+      "text": "no-invented-dependencies",
+      "passed": true,
+      "evidence": "All references stay within the fixture: Next.js, Prisma, Stripe, ioredis, NextAuth, Zod. No invented MongoDB, GraphQL, or other major systems introduced."
+    }
+  ]
+}

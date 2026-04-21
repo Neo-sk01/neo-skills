@@ -1,0 +1,46 @@
+{
+  "eval_id": 1,
+  "eval_name": "mid-session-resume",
+  "configuration": "with_skill",
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "follows-fixture-reload-order",
+      "passed": true,
+      "evidence": "Explicitly enumerates 'Step 3 — Required reload order (from packet): 1. ✅ HANDOFF.md — loaded, 2. ✅ PLAN.md — loaded, 3. ⏭ src/services/subscription.ts — will open when entering TDD GREEN'. Exact fixture order."
+    },
+    {
+      "text": "runs-entire-status",
+      "passed": true,
+      "evidence": "Step 2 runs 'entire status' as bash command and expects 'healthy, on feature/subscription-mgmt, latest checkpoint ck_5e6f7a8b at a1b2c3d'."
+    },
+    {
+      "text": "references-fixture-checkpoints",
+      "passed": true,
+      "evidence": "References ck_5e6f7a8b (latest), ck_7f8e9a2b (Stripe API version), ck_3d4e5f6a (pricing edge cases), and commit a1b2c3d — all from fixture. No invented IDs."
+    },
+    {
+      "text": "follows-fixture-escalation-rule",
+      "passed": true,
+      "evidence": "Quotes the escalation rule verbatim from fixture and states 'I will not run the three archaeology targets yet. They're parked as standby'. Proceeds directly from handoff to task #5 as rule prescribes."
+    },
+    {
+      "text": "continues-task-5-from-fixture",
+      "passed": true,
+      "evidence": "Current task: '#5 — POST /api/subscriptions/:id/upgrade with proration'. Uses exact fixture endpoint path and method. Uses proration_behavior: 'create_prorations' as fixture specifies."
+    },
+    {
+      "text": "references-fixture-context7-results",
+      "passed": true,
+      "evidence": "States 'All session 4 Context7 checks were HIGH. LOW/NONE doc-checks — none outstanding.' Plans a new Context7 check for subscription.update proration_behavior (a legitimate new check, not a re-run of existing HIGH-confidence ones)."
+    },
+    {
+      "text": "acknowledges-fixture-human-task",
+      "passed": true,
+      "evidence": "Unblocked Items Check: 'Human task (Stripe test API keys in CI) — still pending. It blocks task #7 (E2E), not task #5. Continue.' Correctly identifies blocker and scope."
+    }
+  ]
+}

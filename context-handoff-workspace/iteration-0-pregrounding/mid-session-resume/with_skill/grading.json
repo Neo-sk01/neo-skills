@@ -1,0 +1,39 @@
+{
+  "eval_id": 1,
+  "eval_name": "mid-session-resume",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "follows-resume-order",
+      "passed": true,
+      "evidence": "Response follows explicit numbered steps: Step 1 (Read HANDOFF.md) → Step 2 (Run entire status) → Step 3 (Load Files in Prescribed Reload Order: HANDOFF → PLAN.md → CODEBASE.md) → Step 4 (Entire Archaeology)."
+    },
+    {
+      "text": "runs-entire-status",
+      "passed": true,
+      "evidence": "Step 2 explicitly runs 'entire status' and describes what it's checking for: healthy checkpoint state, no stale shadow branches, clean working tree."
+    },
+    {
+      "text": "uses-archaeology-targets",
+      "passed": true,
+      "evidence": "Step 4 uses the exact targets from the handoff: 'entire explain --commit abc1234 --short' for schema decision reasoning. Also mentions the def5678 checkpoint but correctly skips it per escalation rule."
+    },
+    {
+      "text": "respects-escalation-rule",
+      "passed": true,
+      "evidence": "Explicitly quotes the escalation rule: 'Proceed directly from handoff for task 5; inspect Entire only if Stripe API behavior differs.' Skips deeper archaeology because Context7 verification is HIGH confidence."
+    },
+    {
+      "text": "continues-correct-task",
+      "passed": true,
+      "evidence": "Step 7 continues with 'Task #5 — Subscription Upgrade Endpoint' as specified in the handoff. Uses TDD workflow (RED → GREEN → REFACTOR)."
+    },
+    {
+      "text": "references-prior-context7",
+      "passed": true,
+      "evidence": "Step 6 explicitly reviews the handoff's Context7 table, confirms both Stripe and Prisma verifications are HIGH confidence, and states 'I can trust these for task #5 without re-verification.'"
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": "All 6 assertions passed. The with-skill response follows the exact resume protocol with layered context loading, targeted archaeology, escalation rule compliance, and Context7 verification reuse."
+}

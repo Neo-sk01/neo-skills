@@ -1,0 +1,46 @@
+{
+  "eval_id": 2,
+  "eval_name": "budget-pressure-handoff",
+  "configuration": "without_skill",
+  "total": 7,
+  "passed": 4,
+  "failed": 3,
+  "pass_rate": 0.571,
+  "expectations": [
+    {
+      "text": "recognizes-budget-no-new-work",
+      "passed": true,
+      "evidence": "Response defers both tasks #7 and #8 to next session, does not start either. 'Good stopping point — all tests green, no half-finished work.' Respects the wrap-up intent even without naming CAUTION explicitly."
+    },
+    {
+      "text": "handoff-references-fixture-task-progress",
+      "passed": true,
+      "evidence": "'We're 6/8 tasks deep into the Subscription Management epic' — matches fixture progress exactly."
+    },
+    {
+      "text": "handoff-next-action-grounded",
+      "passed": true,
+      "evidence": "'Start here: Task #8 is the most productive next move since Task #7 is blocked on human action.' Plus a Next Steps section that mentions the Stripe test keys blocker on Task #7."
+    },
+    {
+      "text": "handoff-includes-fixture-human-task",
+      "passed": true,
+      "evidence": "Mentions blocker in Next Steps ('Blocker: needs Stripe test API keys provisioned in CI. This is a human task') and again in Gotchas ('Task #7 blocker is human-shaped'). Real fixture blocker, no invented tasks."
+    },
+    {
+      "text": "includes-compact-reload-packet",
+      "passed": false,
+      "evidence": "No Compact Reload Packet section. No reload order enumeration, no Entire archaeology targets, no escalation rule, no resume budget target. Handoff is narrative prose with TL;DR/Next Steps/Gotchas sections instead."
+    },
+    {
+      "text": "includes-context-budget",
+      "passed": false,
+      "evidence": "No Context Budget section. No token estimates, no reload estimate, no reserved buffer, no Entire breakdown. Budget state is acknowledged only via the 'wrap up' framing."
+    },
+    {
+      "text": "compression-pass",
+      "passed": false,
+      "evidence": "No compression pass mentioned or performed. Response goes straight from 'Got it — let's wrap this up cleanly' to the handoff content without a verification step."
+    }
+  ]
+}

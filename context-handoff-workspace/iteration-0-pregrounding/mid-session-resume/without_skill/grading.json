@@ -1,0 +1,39 @@
+{
+  "eval_id": 1,
+  "eval_name": "mid-session-resume",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "follows-resume-order",
+      "passed": false,
+      "evidence": "Response reads the handoff content but doesn't follow a structured resume protocol. Goes straight from 'Understanding the Context' to implementation code."
+    },
+    {
+      "text": "runs-entire-status",
+      "passed": false,
+      "evidence": "No mention of running 'entire status' or any Entire commands despite the user explicitly asking to 'check Entire status.'"
+    },
+    {
+      "text": "uses-archaeology-targets",
+      "passed": false,
+      "evidence": "No Entire archaeology performed. The handoff listed specific archaeology targets but the baseline ignores them entirely."
+    },
+    {
+      "text": "respects-escalation-rule",
+      "passed": false,
+      "evidence": "No escalation rule mentioned or followed. The concept doesn't exist in the baseline response."
+    },
+    {
+      "text": "continues-correct-task",
+      "passed": true,
+      "evidence": "Response correctly identifies and continues with task #5 (upgrade endpoint) based on the handoff's Next Actions section."
+    },
+    {
+      "text": "references-prior-context7",
+      "passed": false,
+      "evidence": "Response mentions proration_behavior from the handoff's 'Context for Next Session' narrative but doesn't reference the structured Context7 verification table or confidence levels."
+    }
+  ],
+  "pass_rate": 0.167,
+  "summary": "1 of 6 assertions passed. Baseline correctly identifies the next task but skips the structured resume protocol, Entire integration, archaeology, escalation rules, and Context7 verification reuse."
+}

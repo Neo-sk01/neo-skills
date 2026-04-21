@@ -1,0 +1,102 @@
+[
+  {
+    "query": "I just cloned the monorepo and this is my very first session — can you map out the architecture before we start building the new billing module? I want to understand how the services talk to each other and what conventions the team follows.",
+    "should_trigger": true
+  },
+  {
+    "query": "ok picking up from yesterday, here's the HANDOFF.md from my last session. Load it up and let's keep going on the auth refactor — I think we left off mid-task on the JWT middleware.",
+    "should_trigger": true
+  },
+  {
+    "query": "I'm getting close to running out of context window here, we've been going for a while. Can you wrap everything up, save the state, and make sure the next session knows exactly where to pick up?",
+    "should_trigger": true
+  },
+  {
+    "query": "we need to plan out the migration from REST to GraphQL — it's going to span probably 4-5 sessions. I want proper handoffs between each one so nothing gets lost. Can you frame this as an epic?",
+    "should_trigger": true
+  },
+  {
+    "query": "this is session 3 of the payments rework. Before we start, run entire status and check the checkpoint from last time — I want to make sure the shadow branch is healthy and we're resuming from the right commit.",
+    "should_trigger": true
+  },
+  {
+    "query": "I keep losing context between sessions — last time the agent just started from scratch and forgot everything we'd decided about the database schema. How do I set up proper session continuity so decisions carry forward?",
+    "should_trigger": true
+  },
+  {
+    "query": "we've been working on this feature for 3 sessions now and I realize we never wrote down what we tried that didn't work. Can you create a failures log so we stop going in circles?",
+    "should_trigger": true
+  },
+  {
+    "query": "I need to hand this project off to another developer who'll be picking it up in Claude Code tomorrow. Generate a comprehensive handoff document that covers where we are, what's verified, what's pending, and how to resume.",
+    "should_trigger": true
+  },
+  {
+    "query": "ok so the last 3 attempts at fixing the race condition in the webhook handler all failed. I think we need to roll back to the last green checkpoint and try a completely different approach. Can you check what Entire captured?",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to start tracking our context budget across sessions — how many tokens we're burning on reload, how much the handoff docs cost, whether we're staying efficient. Set that up for me.",
+    "should_trigger": true
+  },
+  {
+    "query": "can you add a dark mode toggle to the settings page? The design is in Figma, just match the mockup and wire up the theme context.",
+    "should_trigger": false
+  },
+  {
+    "query": "I need to write a Python script that reads a CSV file, deduplicates rows based on the email column, and outputs a clean version. The file is at ~/Downloads/contacts_export.csv",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the difference between useMemo and useCallback in React? I keep getting confused about when to use which one",
+    "should_trigger": false
+  },
+  {
+    "query": "run the test suite and fix any failures — I think something broke in the auth middleware after the last merge. Check the CI logs too if you can.",
+    "should_trigger": false
+  },
+  {
+    "query": "I need help setting up a GitHub Actions CI/CD pipeline for this Next.js project — build, test, lint, and deploy to Vercel on merge to main.",
+    "should_trigger": false
+  },
+  {
+    "query": "refactor the UserService class to use dependency injection instead of hardcoded database calls. Keep the public API the same but make it testable.",
+    "should_trigger": false
+  },
+  {
+    "query": "review this PR for me — it's adding rate limiting to the API. Check for security issues, race conditions, and whether the Redis implementation looks right. PR #247.",
+    "should_trigger": false
+  },
+  {
+    "query": "I want to commit what we have so far and push it to the feature branch. Can you write a good commit message that covers the auth changes?",
+    "should_trigger": false
+  },
+  {
+    "query": "help me debug this TypeError in production — it's happening in the payment processing flow. Here's the stack trace from Sentry, the error started showing up after yesterday's deploy.",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm working on documenting our API endpoints — can you generate OpenAPI specs from the existing route handlers? We use Express with TypeScript.",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you update the CODEBASE.md file? The architecture section is outdated — we moved from Express to Fastify last sprint and the file still references the old setup.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review PLAN.md and tell me if the task ordering makes sense. I think task 4 should come before task 3 because of the database dependency.",
+    "should_trigger": false
+  },
+  {
+    "query": "There's a typo in EPIC.md on line 42 — it says 'authenication' instead of 'authentication'. Can you fix it?",
+    "should_trigger": false
+  },
+  {
+    "query": "Summarize what's in FAILURES.md — I want to share the key takeaways with my team lead in our standup.",
+    "should_trigger": false
+  },
+  {
+    "query": "Delete the HANDOFF.md file, we don't need it anymore since the feature shipped. Also clean up any other stale docs in the root.",
+    "should_trigger": false
+  }
+]

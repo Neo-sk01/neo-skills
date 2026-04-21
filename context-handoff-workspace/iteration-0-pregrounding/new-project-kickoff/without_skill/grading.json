@@ -1,0 +1,39 @@
+{
+  "eval_id": 0,
+  "eval_name": "new-project-kickoff",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "mentions-phase-0",
+      "passed": false,
+      "evidence": "Response jumps straight to 'Explore the Codebase' then immediately into schema design and implementation. No phased approach, no explicit codebase mapping phase."
+    },
+    {
+      "text": "produces-codebase-md",
+      "passed": false,
+      "evidence": "No CODEBASE.md generated. Response explores the codebase informally but doesn't produce a structured mapping document."
+    },
+    {
+      "text": "produces-epic-md",
+      "passed": false,
+      "evidence": "No EPIC.md generated. Response has an implementation order list but no formal epic framing with scope, business intent, or success criteria."
+    },
+    {
+      "text": "context7-doc-check",
+      "passed": false,
+      "evidence": "No Context7 calls or doc verification. Response mentions Stripe proration_behavior but doesn't verify it against current docs or assign confidence levels."
+    },
+    {
+      "text": "identifies-human-tasks",
+      "passed": false,
+      "evidence": "No human tasks identified. Response doesn't separate agent-doable work from tasks requiring human input (credentials, pricing decisions, visual QA)."
+    },
+    {
+      "text": "dependency-map",
+      "passed": false,
+      "evidence": "No dependency map. Response mentions Stripe and Prisma but doesn't create a structured cross-system dependency table with interfaces, contracts, and health checks."
+    }
+  ],
+  "pass_rate": 0.0,
+  "summary": "0 of 6 assertions passed. The baseline response provides a reasonable implementation plan but lacks structured document generation, phased approach, doc verification, or human task identification."
+}

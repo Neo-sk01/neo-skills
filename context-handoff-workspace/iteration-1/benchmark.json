@@ -1,0 +1,188 @@
+{
+  "metadata": {
+    "skill_name": "context-handoff",
+    "skill_path": "/Users/neosekaleli/Desktop/Developer/neo-skills-1/skills/context-handoff",
+    "executor_model": "claude-opus-4-7",
+    "analyzer_model": "claude-opus-4-7",
+    "timestamp": "2026-04-21T00:00:00Z",
+    "evals_run": [0, 1, 2],
+    "runs_per_configuration": 1,
+    "grounded_fixtures": true,
+    "fixtures_dir": "evals/fixtures/"
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "new-project-kickoff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 111.8,
+        "tokens": 40143,
+        "tool_calls": 6
+      },
+      "expectations": [
+        {"text": "mentions-phase-0", "passed": true, "evidence": "Opens with 'You're at Phase 0 — Codebase Understanding' and enumerates the four-phase progression."},
+        {"text": "produces-codebase-md-grounded", "passed": true, "evidence": "CODEBASE.md references next@15.1.0, @prisma/client@5.22.0, stripe@17.2.0, ioredis@5.4.1, next-auth@5.0.0-beta.25 plus 5 more libs at exact fixture versions."},
+        {"text": "dependency-map-from-fixture", "passed": true, "evidence": "Cross-System Dependency Map table: PostgreSQL (Prisma), Stripe (stripe-node 17.2.0), Redis (ioredis 5.4.1), NextAuth — all derivable from fixture."},
+        {"text": "context7-names-fixture-libraries", "passed": true, "evidence": "Names Stripe 17.x, Next.js 15, NextAuth v5 for verification; Dependency Status table lists each by name with honest 'NONE (Context7 unavailable)' confidence."},
+        {"text": "identifies-human-tasks-grounded", "passed": true, "evidence": "Human Tasks table: Stripe API keys, STRIPE_WEBHOOK_SECRET, plan catalog decisions, cancel behavior, upgrade UX, Visual QA — grounded in fixture stack."},
+        {"text": "no-invented-dependencies", "passed": true, "evidence": "Stays within fixture: next, prisma, stripe, ioredis, zod, @auth/core, next-auth, typescript, jest, eslint, tsx. No MongoDB/GraphQL/AWS invented."}
+      ],
+      "notes": ["Explicitly notes Context7 MCP is not configured and refuses to guess — instead of fabricating HIGH confidence results like pre-grounding run did."]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "new-project-kickoff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 31.9,
+        "tokens": 21133,
+        "tool_calls": 1
+      },
+      "expectations": [
+        {"text": "mentions-phase-0", "passed": false, "evidence": "No Phase 0 framing. Goes from stack observations straight to implementation suggestions."},
+        {"text": "produces-codebase-md-grounded", "passed": false, "evidence": "No CODEBASE.md artifact. Response is conversational how-to guide."},
+        {"text": "dependency-map-from-fixture", "passed": false, "evidence": "Dependencies mentioned in prose but no cross-system map table with interfaces, contracts, health checks."},
+        {"text": "context7-names-fixture-libraries", "passed": false, "evidence": "Context7 not mentioned. Cites API details from training data without confidence scoring."},
+        {"text": "identifies-human-tasks-grounded", "passed": true, "evidence": "5 clarifying questions implicitly identify human tasks: subscription model, billing cadence, ownership, schema state, Stripe setup."},
+        {"text": "no-invented-dependencies", "passed": true, "evidence": "All references stay within fixture stack."}
+      ],
+      "notes": ["Strong content quality — recognizes versions, flags next-auth beta, outlines a reasonable skeleton. But produces no structured artifacts."]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mid-session-resume",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 91.8,
+        "tokens": 44682,
+        "tool_calls": 7
+      },
+      "expectations": [
+        {"text": "follows-fixture-reload-order", "passed": true, "evidence": "Explicitly enumerates 'Required reload order (from packet): 1. HANDOFF.md, 2. PLAN.md, 3. src/services/subscription.ts'. Exact fixture order."},
+        {"text": "runs-entire-status", "passed": true, "evidence": "Step 2 runs `entire status` and expects 'healthy, latest checkpoint ck_5e6f7a8b at a1b2c3d'."},
+        {"text": "references-fixture-checkpoints", "passed": true, "evidence": "References ck_5e6f7a8b, ck_7f8e9a2b, ck_3d4e5f6a, commit a1b2c3d — all fixture IDs, no invented."},
+        {"text": "follows-fixture-escalation-rule", "passed": true, "evidence": "Quotes escalation rule verbatim and parks archaeology targets as standby. Proceeds directly to task #5."},
+        {"text": "continues-task-5-from-fixture", "passed": true, "evidence": "Task #5: POST /api/subscriptions/:id/upgrade with proration_behavior: 'create_prorations' — exact fixture contract."},
+        {"text": "references-fixture-context7-results", "passed": true, "evidence": "'All session 4 Context7 checks were HIGH. LOW/NONE doc-checks — none outstanding.' Plans legitimate new check for subscription.update proration, not re-run of HIGH ones."},
+        {"text": "acknowledges-fixture-human-task", "passed": true, "evidence": "'Human task (Stripe test API keys in CI) — still pending. It blocks task #7 (E2E), not task #5. Continue.' Correct scope."}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mid-session-resume",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.857,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 35.3,
+        "tokens": 25597,
+        "tool_calls": 2
+      },
+      "expectations": [
+        {"text": "follows-fixture-reload-order", "passed": false, "evidence": "Reads HANDOFF.md and PLAN.md but doesn't enumerate a deliberate reload sequence. Never declares src/services/subscription.ts as the third file to load per fixture packet."},
+        {"text": "runs-entire-status", "passed": true, "evidence": "'You asked me to run entire status — I don't have shell access. Could you run it and paste the output?' Mentions explicitly."},
+        {"text": "references-fixture-checkpoints", "passed": true, "evidence": "References ck_7f8e9a2b, ck_3d4e5f6a, ck_5e6f7a8b — all fixture IDs."},
+        {"text": "follows-fixture-escalation-rule", "passed": true, "evidence": "'I'll proceed without pulling any archaeology — the handoff says proceed directly to task #5 unless Stripe's update API behaves unexpectedly.' Faithful rule application."},
+        {"text": "continues-task-5-from-fixture", "passed": true, "evidence": "'Task #5 — POST /api/subscriptions/:id/upgrade with proration, proration_behavior: create_prorations.' Exact fixture contract."},
+        {"text": "references-fixture-context7-results", "passed": true, "evidence": "'Installed version is 17.2.0 per the doc verifications table' — explicitly references fixture table."},
+        {"text": "acknowledges-fixture-human-task", "passed": true, "evidence": "'Open human task: Stripe test API keys in CI (blocks #7, not us yet)' — correct."}
+      ],
+      "notes": ["Surprisingly strong baseline: fixture HANDOFF.md is well-structured enough that a competent model without the skill can still extract correct task, checkpoints, API contract. Skill's marginal value here is mainly the structural protocol (explicit reload enumeration), not content grounding."]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "budget-pressure-handoff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 73.4,
+        "tokens": 40214,
+        "tool_calls": 6
+      },
+      "expectations": [
+        {"text": "recognizes-budget-no-new-work", "passed": true, "evidence": "'Recognized: CAUTION budget state... Not starting task #7 or #8 — handing off now.' Explicit acknowledgement and refusal."},
+        {"text": "handoff-references-fixture-task-progress", "passed": true, "evidence": "'Plan progress: 6 of 8' — matches fixture."},
+        {"text": "handoff-next-action-grounded", "passed": true, "evidence": "'Confirm whether Stripe test API keys have been provisioned in CI. If yes → task #7 (E2E). If no → pivot to task #8 (API docs).' References both fixture tasks and blocker."},
+        {"text": "handoff-includes-fixture-human-task", "passed": true, "evidence": "Human Tasks Queue: 'Provision Stripe test API keys in CI | Blocks Plan task #7'. Exact fixture blocker."},
+        {"text": "includes-compact-reload-packet", "passed": true, "evidence": "Full packet with exact next action, resume commands, required reload order, 3 archaeology targets, escalation rule, optional reloads, avoid-reload list, resume budget target."},
+        {"text": "includes-context-budget", "passed": true, "evidence": "Context Budget section with token estimates, reload target, buffer, Entire breakdown, CAUTION analysis."},
+        {"text": "compression-pass", "passed": true, "evidence": "'Running compression pass, then generating HANDOFF.md.' Compression Pass section: verified yes/yes."}
+      ],
+      "notes": ["Used placeholders like <task-6-sha> for unknown values rather than inventing — honest response to missing information."]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "budget-pressure-handoff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.571,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 30.9,
+        "tokens": 21103,
+        "tool_calls": 1
+      },
+      "expectations": [
+        {"text": "recognizes-budget-no-new-work", "passed": true, "evidence": "Defers both #7 and #8 to next session. Respects wrap-up intent."},
+        {"text": "handoff-references-fixture-task-progress", "passed": true, "evidence": "'We're 6/8 tasks deep' — matches fixture."},
+        {"text": "handoff-next-action-grounded", "passed": true, "evidence": "'Start here: Task #8' + blocker flag on Task #7."},
+        {"text": "handoff-includes-fixture-human-task", "passed": true, "evidence": "'Blocker: needs Stripe test API keys provisioned in CI. This is a human task.' Real fixture blocker."},
+        {"text": "includes-compact-reload-packet", "passed": false, "evidence": "No Compact Reload Packet. No reload order, no archaeology targets, no escalation rule, no budget target."},
+        {"text": "includes-context-budget", "passed": false, "evidence": "No Context Budget section. No token estimates, no reload estimate."},
+        {"text": "compression-pass", "passed": false, "evidence": "No compression pass mentioned or performed."}
+      ],
+      "notes": ["Reasonable narrative handoff with correct task progress and blocker, but missing the structural artifacts (reload packet, context budget, compression pass) that make a handoff reliably resumable."]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 92.33, "stddev": 15.69, "min": 73.4, "max": 111.8},
+      "tokens": {"mean": 41680, "stddev": 2123, "min": 40143, "max": 44682}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.587, "stddev": 0.214, "min": 0.333, "max": 0.857},
+      "time_seconds": {"mean": 32.70, "stddev": 1.88, "min": 30.9, "max": 35.3},
+      "tokens": {"mean": 22611, "stddev": 2111, "min": 21103, "max": 25597}
+    },
+    "delta": {
+      "pass_rate": "+0.413",
+      "time_seconds": "+59.63",
+      "tokens": "+19069"
+    }
+  },
+  "notes": [
+    "With-skill achieves 100% on fixture-grounded assertions (20/20) vs 60% baseline (12/20). Differential is meaningful but narrower than pre-grounding run (which was 100% vs 15%) because well-structured fixtures let the baseline pick up surface-level facts without the skill.",
+    "Kickoff eval shows biggest skill differential (100% vs 33%) — baseline produces no structured artifacts (CODEBASE.md, EPIC.md, Context7 audit) and skips Phase 0 entirely.",
+    "Resume eval shows smallest differential (100% vs 86%) — fixture HANDOFF.md's Compact Reload Packet does most of the work. Both configurations extract correct task, checkpoints, API contract. Skill's marginal value is the explicit reload-order protocol.",
+    "Handoff-generation eval shows medium differential (100% vs 57%) — baseline produces a reasonable narrative handoff with correct progress/blocker, but omits Compact Reload Packet, Context Budget, and compression pass. These are the structural artifacts that make handoffs reliably resumable across sessions.",
+    "With-skill runs cost ~1.8x tokens and ~2.8x time — similar ratio to pre-grounding run. Cost is in reading the skill docs and producing structured artifacts.",
+    "One honest observation: the eval design should ideally include at least one scenario where the fixture HANDOFF.md is PARTIALLY complete or malformed — the current resume fixture is nearly optimal, which undersells the skill's robustness value. Future iteration should add a degraded-fixture eval."
+  ]
+}

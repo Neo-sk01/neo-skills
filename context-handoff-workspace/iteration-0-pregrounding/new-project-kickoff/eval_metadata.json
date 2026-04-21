@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "new-project-kickoff",
+  "prompt": "I just cloned a Next.js + Prisma + Stripe project. I need to add a subscription management feature with plan upgrades and downgrades. This is my first session — help me get started.",
+  "assertions": []
+}

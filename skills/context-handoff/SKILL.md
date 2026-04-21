@@ -1,3 +1,8 @@
+---
+name: context-handoff
+description: "Multi-session continuity and context management for agentic coding workflows. Use this skill when the user's intent involves cross-session coordination — resuming from a previous session, loading or generating a HANDOFF.md, running out of context window or budget, mapping a codebase for the first time (Phase 0), planning work that spans multiple sessions, framing an epic for multi-session execution, tracking failed approaches across sessions, handing off a project to another developer or agent, checking Entire status or checkpoints, rolling back to a previous checkpoint, creating a multi-session plan, or recovering lost context between sessions. Also triggers on explicit continuity concepts: session handoffs, context budget, reload packets, Entire archaeology, compact reload packets, or session lifecycle management. Do NOT trigger on mere filename mentions (CODEBASE.md, EPIC.md, PLAN.md, FAILURES.md) unless the surrounding intent is clearly about session continuity, handoff generation, or cross-session coordination — editing, reviewing, or summarizing those files is not a trigger."
+---
+
 # Context Handoff Skill
 
 Continuity layer for agentic coding sessions. Orchestrates four systems — **Superpowers** (dev rhythm), **Entire** (session recording), **Context7** (doc verification), **Codex** (cross-model review) — managing memory across sessions so nothing is lost.

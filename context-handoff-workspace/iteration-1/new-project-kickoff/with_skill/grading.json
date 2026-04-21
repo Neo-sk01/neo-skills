@@ -1,0 +1,41 @@
+{
+  "eval_id": 0,
+  "eval_name": "new-project-kickoff",
+  "configuration": "with_skill",
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "mentions-phase-0",
+      "passed": true,
+      "evidence": "Response opens with 'You're at Phase 0 — Codebase Understanding' and explicitly enumerates the four-phase progression before any implementation work."
+    },
+    {
+      "text": "produces-codebase-md-grounded",
+      "passed": true,
+      "evidence": "CODEBASE.md block references next@15.1.0, @prisma/client@5.22.0, stripe@17.2.0, ioredis@5.4.1, next-auth@5.0.0-beta.25, plus zod@3.23.8, typescript@5.6.3, jest@29.7.0, eslint@9.14.0, tsx@4.19.2 — all matching fixture versions exactly."
+    },
+    {
+      "text": "dependency-map-from-fixture",
+      "passed": true,
+      "evidence": "Cross-System Dependency Map table includes PostgreSQL (via Prisma), Stripe (via stripe-node 17.2.0 + webhooks), Redis (via ioredis 5.4.1), and NextAuth (via @auth/core 0.37.0 + next-auth 5.0.0-beta.25) — all derivable from fixture package.json."
+    },
+    {
+      "text": "context7-names-fixture-libraries",
+      "passed": true,
+      "evidence": "Explicitly names Stripe 17.x, Next.js 15, NextAuth v5 for Context7 verification; Dependency Status table lists each fixture library by name with 'Context7 unavailable' confidence rather than fabricating results."
+    },
+    {
+      "text": "identifies-human-tasks-grounded",
+      "passed": true,
+      "evidence": "Human Tasks table includes Stripe account/API keys, STRIPE_WEBHOOK_SECRET, plan catalog decisions, cancel behavior, upgrade/downgrade UX, Visual QA — all grounded in the Next.js+Stripe+NextAuth fixture, not generic."
+    },
+    {
+      "text": "no-invented-dependencies",
+      "passed": true,
+      "evidence": "All dependency references stay within fixture: next, prisma, stripe, ioredis, zod, @auth/core, next-auth, typescript, jest, eslint, tsx. No MongoDB, GraphQL, AWS SDK, Firebase, or other invented systems."
+    }
+  ]
+}

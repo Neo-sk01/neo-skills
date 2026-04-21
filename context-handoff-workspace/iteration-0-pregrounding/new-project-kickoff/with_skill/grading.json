@@ -1,0 +1,39 @@
+{
+  "eval_id": 0,
+  "eval_name": "new-project-kickoff",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "mentions-phase-0",
+      "passed": true,
+      "evidence": "Response explicitly titles its first section 'Phase 0: Codebase Understanding (First Session)' and follows it before any implementation work."
+    },
+    {
+      "text": "produces-codebase-md",
+      "passed": true,
+      "evidence": "Response generates a full CODEBASE.md following the CODEBASE-TEMPLATE.md with Architecture, File Structure, Conventions, Test Patterns, Build & Deploy, Cross-System Dependency Map, Dependency Status, Domain Knowledge, and Environment Variables sections."
+    },
+    {
+      "text": "produces-epic-md",
+      "passed": true,
+      "evidence": "Response generates a structured EPIC.md under 'Phase 1: Epic Framing' with Business Intent, Scope (in/out), Human Tasks, and Success Criteria."
+    },
+    {
+      "text": "context7-doc-check",
+      "passed": true,
+      "evidence": "Response shows explicit Context7 resolve-library-id and query-docs calls for Next.js, Prisma, and Stripe with confidence scoring (HIGH/MEDIUM). Also includes a Dependency Status table with Context7 Audit results."
+    },
+    {
+      "text": "identifies-human-tasks",
+      "passed": true,
+      "evidence": "Response includes a 'Human Tasks Identified Early' table with Stripe API keys (account access), Pricing decisions (business decision), and Visual QA (design judgment) — each with reason and priority."
+    },
+    {
+      "text": "dependency-map",
+      "passed": true,
+      "evidence": "CODEBASE.md includes a 'Cross-System Dependency Map' table with PostgreSQL, Stripe, and NextAuth entries including Type, Interface, Contract, and Health Check columns."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": "All 6 assertions passed. The with-skill response follows the full Phase 0 → Phase 1 → Phase 2 pipeline with structured document generation, Context7 verification, and human task identification."
+}

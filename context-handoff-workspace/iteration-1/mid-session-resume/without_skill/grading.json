@@ -1,0 +1,46 @@
+{
+  "eval_id": 1,
+  "eval_name": "mid-session-resume",
+  "configuration": "without_skill",
+  "total": 7,
+  "passed": 6,
+  "failed": 1,
+  "pass_rate": 0.857,
+  "expectations": [
+    {
+      "text": "follows-fixture-reload-order",
+      "passed": false,
+      "evidence": "Response reads HANDOFF.md and PLAN.md but does not enumerate a deliberate reload order from the packet. Mentions subscription.create.test.ts as a pattern reference but never declares src/services/subscription.ts as the next-to-load file per the fixture's 3-step order."
+    },
+    {
+      "text": "runs-entire-status",
+      "passed": true,
+      "evidence": "Explicitly acknowledges the command: 'You asked me to run entire status — I don't have shell access in this turn. Could you run it and paste the output?' Mentions and requests it."
+    },
+    {
+      "text": "references-fixture-checkpoints",
+      "passed": true,
+      "evidence": "References ck_7f8e9a2b (session 3 Stripe API version analysis), ck_3d4e5f6a (pricing tier edge cases), ck_5e6f7a8b (latest). All from fixture, no invented IDs."
+    },
+    {
+      "text": "follows-fixture-escalation-rule",
+      "passed": true,
+      "evidence": "States 'If it comes back healthy, I'll proceed without pulling any archaeology — the handoff says proceed directly to task #5 unless Stripe's update API behaves unexpectedly.' Faithful application of fixture rule."
+    },
+    {
+      "text": "continues-task-5-from-fixture",
+      "passed": true,
+      "evidence": "'Next action per your handoff: Task #5 — POST /api/subscriptions/:id/upgrade with proration.' Uses exact fixture endpoint shape and proration_behavior: 'create_prorations'."
+    },
+    {
+      "text": "references-fixture-context7-results",
+      "passed": true,
+      "evidence": "'Installed version is 17.2.0 per the doc verifications table' — explicitly references the fixture's Doc Verifications table."
+    },
+    {
+      "text": "acknowledges-fixture-human-task",
+      "passed": true,
+      "evidence": "'Open human task: Stripe test API keys in CI (blocks #7, not us yet)' — correctly identifies blocker and scope."
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "invalidated": true,
+  "invalidated_at": "2026-04-21",
+  "invalidated_reason": "Generated against pre-grounding evals/evals.json (files: []). Current evals require fixture-grounded evidence; outputs in this directory hallucinate wrong versions, checkpoint IDs, reload order, and next-task state. See INVALIDATED.md.",
+  "metadata": {
+    "skill_name": "context-handoff",
+    "skill_path": "/Users/neosekaleli/Desktop/Developer/neo-skills-1/skills/context-handoff",
+    "executor_model": "claude-opus-4-6",
+    "analyzer_model": "claude-opus-4-6",
+    "timestamp": "2026-04-12T23:00:00Z",
+    "evals_run": [0, 1, 2],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "new-project-kickoff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 186.5,
+        "tokens": 31758,
+        "tool_calls": 7,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "mentions-phase-0", "passed": true, "evidence": "Response explicitly titles its first section 'Phase 0: Codebase Understanding (First Session)' and follows it before any implementation work."},
+        {"text": "produces-codebase-md", "passed": true, "evidence": "Response generates a full CODEBASE.md following the CODEBASE-TEMPLATE.md with all major sections."},
+        {"text": "produces-epic-md", "passed": true, "evidence": "Response generates a structured EPIC.md with Business Intent, Scope, Human Tasks, and Success Criteria."},
+        {"text": "context7-doc-check", "passed": true, "evidence": "Shows explicit Context7 resolve-library-id and query-docs calls with confidence scoring (HIGH/MEDIUM)."},
+        {"text": "identifies-human-tasks", "passed": true, "evidence": "Includes Human Tasks table with Stripe API keys, Pricing decisions, and Visual QA."},
+        {"text": "dependency-map", "passed": true, "evidence": "CODEBASE.md includes Cross-System Dependency Map table with PostgreSQL, Stripe, and NextAuth."}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "new-project-kickoff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 59.1,
+        "tokens": 13429,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "mentions-phase-0", "passed": false, "evidence": "Jumps straight to codebase exploration then schema design. No phased approach."},
+        {"text": "produces-codebase-md", "passed": false, "evidence": "No CODEBASE.md generated."},
+        {"text": "produces-epic-md", "passed": false, "evidence": "No EPIC.md generated."},
+        {"text": "context7-doc-check", "passed": false, "evidence": "No Context7 calls or doc verification."},
+        {"text": "identifies-human-tasks", "passed": false, "evidence": "No human tasks identified."},
+        {"text": "dependency-map", "passed": false, "evidence": "No dependency map created."}
+      ],
+      "notes": ["Baseline provides a reasonable implementation plan but entirely lacks structured documentation and verification."]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mid-session-resume",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 86.3,
+        "tokens": 21088,
+        "tool_calls": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "follows-resume-order", "passed": true, "evidence": "Follows numbered steps: HANDOFF → entire status → reload files → Entire archaeology."},
+        {"text": "runs-entire-status", "passed": true, "evidence": "Step 2 explicitly runs 'entire status' and describes checks."},
+        {"text": "uses-archaeology-targets", "passed": true, "evidence": "Uses exact targets from handoff: entire explain --commit abc1234 --short."},
+        {"text": "respects-escalation-rule", "passed": true, "evidence": "Quotes escalation rule and skips deeper archaeology due to HIGH confidence."},
+        {"text": "continues-correct-task", "passed": true, "evidence": "Continues with task #5 (upgrade endpoint) using TDD."},
+        {"text": "references-prior-context7", "passed": true, "evidence": "Reviews handoff's Context7 table, confirms HIGH confidence, states no re-verification needed."}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mid-session-resume",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.167,
+        "passed": 1,
+        "failed": 5,
+        "total": 6,
+        "time_seconds": 52.1,
+        "tokens": 13205,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "follows-resume-order", "passed": false, "evidence": "No structured resume protocol. Goes straight to implementation."},
+        {"text": "runs-entire-status", "passed": false, "evidence": "No mention of 'entire status' despite user asking for it."},
+        {"text": "uses-archaeology-targets", "passed": false, "evidence": "No Entire archaeology performed."},
+        {"text": "respects-escalation-rule", "passed": false, "evidence": "No escalation rule concept exists in baseline."},
+        {"text": "continues-correct-task", "passed": true, "evidence": "Correctly identifies task #5 from handoff's Next Actions."},
+        {"text": "references-prior-context7", "passed": false, "evidence": "Mentions proration from narrative but doesn't reference Context7 table or confidence."}
+      ],
+      "notes": ["Baseline correctly identifies the next task but skips all structured resume protocols."]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "budget-pressure-handoff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 147.6,
+        "tokens": 26384,
+        "tool_calls": 8,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "recognizes-budget-pressure", "passed": true, "evidence": "Opens with 'Recognizing CAUTION territory' and explicitly states will NOT start task #7."},
+        {"text": "follows-handoff-template", "passed": true, "evidence": "Generated HANDOFF.md contains all template sections (20+ sections)."},
+        {"text": "includes-compact-reload-packet", "passed": true, "evidence": "Full packet with next action, reload order, Entire targets, escalation rule, budget target."},
+        {"text": "includes-context-budget", "passed": true, "evidence": "Complete budget section with token estimates, Entire breakdown, per-task costs."},
+        {"text": "includes-entire-checkpoints", "passed": true, "evidence": "Checkpoint table with 2 entries including IDs, commits, and descriptions."},
+        {"text": "compression-pass", "passed": true, "evidence": "Pre-handoff compression with 4-point check plus Compression Pass verification section."},
+        {"text": "no-new-tasks-started", "passed": true, "evidence": "Explicitly refuses to start task #7. Current Task says 'ready for plan task #7.'"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "budget-pressure-handoff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.286,
+        "passed": 2,
+        "failed": 5,
+        "total": 7,
+        "time_seconds": 59.9,
+        "tokens": 13256,
+        "tool_calls": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "recognizes-budget-pressure", "passed": true, "evidence": "Acknowledges wrap-up request and doesn't start new tasks."},
+        {"text": "follows-handoff-template", "passed": false, "evidence": "HANDOFF.md has only 5 sections vs 20+ in template."},
+        {"text": "includes-compact-reload-packet", "passed": false, "evidence": "No compact reload packet."},
+        {"text": "includes-context-budget", "passed": false, "evidence": "No context budget data."},
+        {"text": "includes-entire-checkpoints", "passed": false, "evidence": "No Entire checkpoint references."},
+        {"text": "compression-pass", "passed": false, "evidence": "No compression pass performed."},
+        {"text": "no-new-tasks-started", "passed": true, "evidence": "Wraps up without starting task #7."}
+      ],
+      "notes": ["Baseline handoff is minimal but functional. Missing structured sections for reliable cross-session continuity."]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 140.1, "stddev": 41.2, "min": 86.3, "max": 186.5},
+      "tokens": {"mean": 26410, "stddev": 4335, "min": 21088, "max": 31758}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.151, "stddev": 0.117, "min": 0.0, "max": 0.286},
+      "time_seconds": {"mean": 57.0, "stddev": 3.4, "min": 52.1, "max": 59.9},
+      "tokens": {"mean": 13297, "stddev": 92, "min": 13205, "max": 13429}
+    },
+    "delta": {
+      "pass_rate": "+0.849",
+      "time_seconds": "+83.1",
+      "tokens": "+13113"
+    }
+  },
+  "notes": [
+    "With-skill achieves 100% pass rate across all 19 assertions vs 15.1% baseline — the skill adds substantial structure that vanilla Claude does not produce.",
+    "continues-correct-task passes in both configurations — measures basic reading comprehension, not skill value. Non-discriminating assertion.",
+    "recognizes-budget-pressure and no-new-tasks-started pass in both configurations — follow from user's explicit instruction, not the skill. Non-discriminating.",
+    "With-skill runs cost ~2x tokens and ~2.5x time. Trade-off: comprehensive structured documentation vs quick implementation-focused response.",
+    "Biggest skill differential is in resume test (100% vs 16.7%) — structured resume protocol with Entire archaeology is the skill's most unique value."
+  ]
+}
