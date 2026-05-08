@@ -24,9 +24,9 @@ It orchestrates four systems:
 
 **At the start of each feature**, the agent frames the work as an epic, cross-references against live library docs via Context7, and builds a verified plan.
 
-**During each session**, the agent works through the plan, validates code against current documentation, and tracks every decision.
+**During each session**, the agent works through the plan, validates code against current documentation, tracks every decision, and checks context usage before it gets too full.
 
-**At the end of each session**, the agent writes `HANDOFF.md` — a structured document capturing exactly where it stopped, what was verified, what's next, a compact reload packet, and the specific Entire checkpoints that recover deeper context.
+**At the end of each session**, or automatically when context used reaches 150,000 tokens, the agent writes `HANDOFF.md` — a structured document capturing exactly where it stopped, what was verified, what's next, a compact reload packet, and the specific Entire checkpoints that recover deeper context.
 
 **At the start of the next session**, the agent reads `HANDOFF.md` first, follows its compact reload packet, and then inspects the referenced Entire checkpoints as needed to recover the full reasoning path without blindly replaying everything.
 

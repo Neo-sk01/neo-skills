@@ -21,9 +21,9 @@ Your agent works in sessions. Each session has a beginning, middle, and end. Thi
 
 **At the start of each feature**, the agent frames the work as an epic with business intent and technical approach, then builds a phased plan. No user stories, no sprint boards — just a clear sequence of what to build and in what order.
 
-**During each session**, the agent works through the plan, validates its code against live library documentation using Context7, runs tests continuously, and tracks every decision it makes.
+**During each session**, the agent works through the plan, validates its code against live library documentation using Context7, runs tests continuously, tracks every decision it makes, and checks context usage at natural boundaries.
 
-**At the end of each session**, before context runs out, the agent writes a structured handoff document — `HANDOFF.md` — that captures exactly where it stopped, what it verified, what's next, and what the next session needs to know. The handoff starts with a compact reload packet so the next session can resume with a clean context window, and it points to the exact Entire checkpoints that recover the deeper reasoning. The latest handoff is saved in your Git repo, the previous one is archived in repo-local memory, and everything can be mirrored to Obsidian if you use it.
+**At the end of each session**, before context runs out, the agent writes a structured handoff document — `HANDOFF.md` — that captures exactly where it stopped, what it verified, what's next, and what the next session needs to know. If context used reaches 150,000 tokens, the agent starts the handoff automatically at the next safe atomic stop instead of beginning more work. The handoff starts with a compact reload packet so the next session can resume with a clean context window, and it points to the exact Entire checkpoints that recover the deeper reasoning. The latest handoff is saved in your Git repo, the previous one is archived in repo-local memory, and everything can be mirrored to Obsidian if you use it.
 
 **At the start of the next session**, you point the agent at `HANDOFF.md` and tell it to follow the reload packet. The agent reads that first, runs a preflight check to make sure the repo matches what the handoff claims, loads the additional files it actually needs, and then uses the referenced Entire checkpoints to recover the full reasoning path where needed.
 
@@ -55,7 +55,7 @@ The agent writes code that passes its own tests but clashes with your codebase �
 
 Long coding sessions degrade in quality. The agent's responses get less precise, it forgets earlier context, it starts contradicting its own earlier decisions. You don't notice until you review the output and find inconsistencies.
 
-**How this workflow fixes it:** The handoff trigger system detects context pressure before it becomes a problem. Instead of pushing through with degraded context, the agent cleanly finishes its current task, generates a comprehensive handoff, and lets the next session start fresh with full context. A clean handoff at 40% context beats a sloppy continuation at 80%.
+**How this workflow fixes it:** The handoff trigger system detects context pressure before it becomes a problem. The hard trigger is 150,000 tokens used: once the agent reaches that point, it finishes the smallest safe atomic unit, generates a comprehensive handoff, and lets the next session start fresh with full context. A clean handoff at 150k beats a sloppy continuation near the edge of the window.
 
 ### 5. The Task-Level Thinking Problem
 
@@ -113,7 +113,7 @@ This is the repeating loop that runs for every coding session.
 
 **Doc-Check During Work:** Every time the agent is about to use a library API it hasn't verified this session, it queries Context7 first. This isn't optional — it's a mandatory checkpoint. If the API doesn't match expectations, the agent adjusts before writing broken code.
 
-**Handoff:** When a plan phase completes, a blocker is hit, or context pressure builds, the agent finishes its current atomic unit and generates `HANDOFF.md`. This captures a compact reload packet, the Entire archaeology targets for full-context recovery, commit SHA, dirty files, completed work, current task, next actions, decisions made, doc verifications performed, codebase discoveries, environment snapshot, and token/context-budget tracking. It archives the previous handoff in `.agent-memory/`, writes the new handoff to the repo root, and mirrors to Obsidian if configured.
+**Handoff:** When a plan phase completes, a blocker is hit, or context pressure builds, the agent finishes its current atomic unit and generates `HANDOFF.md`. Context pressure has a hard trigger: at 150,000 tokens used, the agent starts handoff at the next safe atomic stop and records whether the measurement was exact or estimated. This captures a compact reload packet, the Entire archaeology targets for full-context recovery, commit SHA, dirty files, completed work, current task, next actions, decisions made, doc verifications performed, codebase discoveries, environment snapshot, and token/context-budget tracking. It archives the previous handoff in `.agent-memory/`, writes the new handoff to the repo root, and mirrors to Obsidian if configured.
 
 ---
 

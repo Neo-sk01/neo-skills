@@ -22,6 +22,7 @@ The context-handoff skill is located at `skills/context-handoff/SKILL.md`. Read 
 - Follow the skill workflow exactly — do not partially apply it
 - Every doc-check via Context7 is mandatory, not optional
 - Handoff documents must be generated at every session end — no exceptions
+- If context used reaches 150,000 tokens, start handoff at the next safe atomic stop
 - Archive previous handoffs in repo-local memory before overwriting the current one
 - "Seems right" is never sufficient — verification requires evidence
 - Resume from `HANDOFF.md`, run `entire status`, then use the Compact Reload Packet and referenced Entire checkpoints for deeper transcript archaeology

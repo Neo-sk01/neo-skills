@@ -44,6 +44,11 @@ Plan mutations this session: {count, or "none"}
 - Worktree: {branch name} at {path}
 
 ## Context Budget
+- Context window limit: {n}
+- Current context used: {n}
+- Context measurement: exact | estimated
+- 150k threshold status: below | reached | exceeded
+- Handoff trigger reason: {scheduled boundary | context >=150k | budget per task | blocked | user requested}
 - Estimated tokens consumed this session: {n}
 - Estimated tokens loaded at resume start: {n}
 - Target reload budget for next session: {n}

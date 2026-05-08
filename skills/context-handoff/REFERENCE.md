@@ -13,14 +13,19 @@ At session start:
   - Remaining = total - loaded
   - Reserve 10-20% of the window for debugging/review surprises
   - Set a target reload budget for the next session
+  - Determine whether exact context/token telemetry is available. If not, use a conservative estimate and mark it as estimated.
 
 During work:
+  - Check context used after large file reads, large tool outputs, subagent/Codex result loads, and any broad repository reload
   - After each task, estimate tokens consumed
   - Calculate: remaining budget vs remaining plan tasks
+  - Before starting a new task, check whether context used is near or above the hard threshold
   - Re-estimate whether the next session's reload packet still fits comfortably
   - If handoff/supporting docs are getting bloated, compress or move detail into referenced files
 
 Thresholds:
+  - Context used >=150k tokens: HANDOFF NOW — finish the smallest safe atomic unit, then generate handoff before starting more work
+  - If exact telemetry is unavailable and the conservative estimate is within ~5k of 150k, treat the threshold as reached
   - >5k tokens per remaining task: COMFORTABLE — continue
   - 2k-5k: CAUTION — finish current task, evaluate
   - <2k: HANDOFF NOW — finish atomic unit, generate handoff
@@ -30,6 +35,11 @@ Thresholds:
 Record in handoff:
 ```
 ## Context Budget
+- Context window limit: {n}
+- Current context used: {n}
+- Context measurement: exact | estimated
+- 150k threshold status: below | reached | exceeded
+- Handoff trigger reason: {scheduled boundary | context >=150k | budget per task | blocked | user requested}
 - Estimated tokens consumed: {n}
 - Estimated tokens loaded at resume start: {n}
 - Target reload budget for next session: {n}

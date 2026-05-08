@@ -81,7 +81,7 @@ Worktree + plan generated. Mark handoff-safe boundaries (`--- HANDOFF SAFE ---`)
 
 **Resume:** Load `HANDOFF.md` first. Run `entire status` to confirm repository/session health. Use the handoff's compact reload packet to decide which supporting docs to load next and which Entire checkpoints/transcript segments to inspect next. Resume in layers: handoff first, targeted docs second, targeted Entire archaeology third. Default archaeology path: `entire explain --short` first, then `--full` or `--raw-transcript` only where the handoff points you. Use `entire resume <branch>` when restoring work on an existing branch and `entire doctor` if local session state is stuck or stale.
 
-**Work:** Superpowers drives. Monitor: context budget thresholds (see REFERENCE.md), rollback protocol (3 fails → safe restore or fresh worktree, never destructive reset), plan mutation (formal), integration checkpoints (full suite after batches), Context7 at TDD RED, Codex for high-risk review + delegation, human task queuing, and the projected size of the next session's reload packet plus its targeted Entire archaeology path. Prefer logical commits at meaningful boundaries so Entire checkpoints stay useful for rewind and archaeology. Use `entire rewind` only for intentional active-session rollback inside the current session; use `entire resume <branch>` for later re-entry.
+**Work:** Superpowers drives. Monitor context usage continuously (see REFERENCE.md): check it at session start, after large reload/tool outputs, after each task, and before starting a new task. When context used reaches 150,000 tokens, enter HANDOFF NOW: finish the smallest safe atomic unit, then generate `HANDOFF.md` before taking on more work. Also monitor rollback protocol (3 fails → safe restore or fresh worktree, never destructive reset), plan mutation (formal), integration checkpoints (full suite after batches), Context7 at TDD RED, Codex for high-risk review + delegation, human task queuing, and the projected size of the next session's reload packet plus its targeted Entire archaeology path. Prefer logical commits at meaningful boundaries so Entire checkpoints stay useful for rewind and archaeology. Use `entire rewind` only for intentional active-session rollback inside the current session; use `entire resume <branch>` for later re-entry.
 
 **Handoff:** Push to next safe point → check Codex jobs → verification → compression pass → generate `HANDOFF.md` (see `HANDOFF-TEMPLATE.md`) with a compact reload packet, context-budget data, and explicit Entire archaeology targets → archive the previous handoff in repo-local memory first → save current handoff to Git → mirror to Obsidian only if configured. If the host offers a built-in compact/summarize feature, run it only after the handoff is written and verified.
 
@@ -101,8 +101,9 @@ Full integration checkpoint. Codex review on full diff. Auto-documentation (READ
 | Mid-RED | ⚠️ OK | Capture test path |
 | Mid-brainstorming/debugging/review | ❌ AVOID | Only if critically low budget |
 | Codex job running | ⚠️ OK | Record job ID |
+| Context used ≥150k tokens | ⚠️/✅ | HANDOFF NOW at the next safe atomic stop |
 
-**Budget overrides timing.** CAUTION (<5k tokens/task) → finish current, evaluate. HANDOFF NOW (<2k) → stop at next ⚠️/✅.
+**Budget overrides timing.** Context used ≥150k tokens → HANDOFF NOW. Otherwise CAUTION (<5k tokens/task) → finish current, evaluate. HANDOFF NOW (<2k) → stop at next ⚠️/✅.
 
 ---
 
